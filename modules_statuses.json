@@ -8,5 +8,9 @@
     "Student": true,
     "Teacher": true,
     "Parent": true,
-    "Enrollment": true
+    "Enrollment": true,
+    "Course": true,
+    "LMS": true,
+    "Media": true,
+    "Content": true
 }
