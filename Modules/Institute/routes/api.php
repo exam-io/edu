@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Route;
 use Modules\Institute\Http\Controllers\AcademicSessionController;
 use Modules\Institute\Http\Controllers\InstituteController;
 
-Route::middleware(['tenant', 'auth:sanctum'])->prefix('v1')->group(function (): void {
+Route::middleware(['tenant', 'tenant.context', 'tenant.active', 'tenant.scope', 'auth:sanctum'])->prefix('v1')->group(function (): void {
     Route::post('/institutes/register', [InstituteController::class, 'register'])
         ->middleware('identity.permission:manage-institutes');
 

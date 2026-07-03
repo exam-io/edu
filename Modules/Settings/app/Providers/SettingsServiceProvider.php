@@ -4,9 +4,18 @@ namespace Modules\Settings\Providers;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Settings\Application\Contracts\UserSettingsServiceInterface;
+use Modules\Settings\Application\Services\UserSettingsService;
 
 class SettingsServiceProvider extends ModuleServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(UserSettingsServiceInterface::class, UserSettingsService::class);
+    }
+
     /**
      * The name of the module.
      */

@@ -1,0 +1,11 @@
+{
+    "name": "Student",
+    "alias": "student",
+    "description": "User management - students and parent linking",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Student\\Providers\\StudentServiceProvider"
+    ],
+    "files": []
+}

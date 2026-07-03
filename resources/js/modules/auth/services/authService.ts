@@ -25,11 +25,15 @@ const authHttp = axios.create({
 const tokenStorageKey = 'eduos:auth:token';
 
 function readErrorMessage(error: unknown): string {
+    if (error instanceof Error) {
+        return error.message || 'Request failed.';
+    }
+
     if (!(error instanceof AxiosError)) {
         return 'Request failed.';
     }
 
-    const payload = error.response?.data as Partial<AuthEnvelope<unknown>> | undefined;
+    const payload = error.response?.data as Partial<AuthEnvelope<unknown>> | { message?: string } | undefined;
 
     return payload?.message ?? error.message ?? 'Request failed.';
 }

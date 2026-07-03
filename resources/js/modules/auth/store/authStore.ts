@@ -13,12 +13,14 @@ interface AuthState {
     token: string | null;
     isAuthenticated: boolean;
     loading: boolean;
+    bootstrapError: string | null;
     login: (payload: LoginPayload) => Promise<void>;
     logout: () => Promise<void>;
     fetchContext: () => Promise<void>;
     initialize: () => Promise<void>;
     setTheme: (theme: string) => void;
     setLanguage: (language: string) => void;
+    clearBootstrapError: () => void;
 }
 
 const initialToken = authService.getStoredToken();
@@ -32,6 +34,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
     token: initialToken,
     isAuthenticated: Boolean(initialToken),
     loading: false,
+    bootstrapError: null,
 
     login: async (payload) => {
         set({ loading: true });
@@ -43,6 +46,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             set({
                 token: result.token,
                 isAuthenticated: true,
+                bootstrapError: null,
             });
 
             await get().fetchContext();
@@ -66,6 +70,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
                 settings: null,
                 token: null,
                 isAuthenticated: false,
+                bootstrapError: null,
                 loading: false,
             });
         }
@@ -81,6 +86,7 @@ export const useAuthStore = create<AuthState>((set, get) => ({
             permissions: context.permissions,
             settings: context.user.settings ?? null,
             isAuthenticated: true,
+            bootstrapError: null,
         });
 
         if (context.user.settings?.theme) {
@@ -96,24 +102,42 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         const token = get().token;
 
         if (!token) {
+            set({ bootstrapError: null });
             return;
         }
 
-        set({ loading: true });
+        set({ loading: true, bootstrapError: null });
         authService.setToken(token);
 
         try {
             await get().fetchContext();
-        } catch {
-            authService.setToken(null);
+        } catch (error) {
+            const message = error instanceof Error ? error.message.toLowerCase() : '';
+            const isUnauthenticated = message.includes('unauthenticated');
+
+            if (isUnauthenticated) {
+                authService.setToken(null);
+                set({
+                    user: null,
+                    tenant: null,
+                    roles: [],
+                    permissions: [],
+                    settings: null,
+                    token: null,
+                    isAuthenticated: false,
+                    bootstrapError: null,
+                });
+                return;
+            }
+
+            // Keep current token/session state on non-auth failures (tenant/network/transient errors).
+            const fallbackMessage = 'Unable to restore full session context. Check API/server tenant configuration and try refreshing again.';
             set({
-                user: null,
-                tenant: null,
-                roles: [],
-                permissions: [],
-                settings: null,
-                token: null,
-                isAuthenticated: false,
+                isAuthenticated: true,
+                bootstrapError:
+                    error instanceof Error && error.message.trim() !== '' && error.message !== 'Request failed.'
+                        ? error.message
+                        : fallbackMessage,
             });
         } finally {
             set({ loading: false });
@@ -134,5 +158,9 @@ export const useAuthStore = create<AuthState>((set, get) => ({
         set((state) => ({
             settings: state.settings ? { ...state.settings, language: nextLanguage } : state.settings,
         }));
+    },
+
+    clearBootstrapError: () => {
+        set({ bootstrapError: null });
     },
 }));

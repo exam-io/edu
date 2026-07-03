@@ -4,6 +4,7 @@ namespace Modules\Institute\Application\Services;
 
 use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
+use Modules\Institute\Domain\Events\BrandingUpdated;
 use Modules\Institute\Domain\Events\InstituteBrandingUpdated;
 use Modules\Institute\Domain\Models\Institute;
 
@@ -41,6 +42,7 @@ class InstituteBrandingService
 
         $this->invalidateCache($institute->id);
 
+        Event::dispatch(new BrandingUpdated($institute->id, auth()->id()));
         Event::dispatch(new InstituteBrandingUpdated($institute->id));
 
         return $institute->refresh();

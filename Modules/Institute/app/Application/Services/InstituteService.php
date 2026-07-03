@@ -3,6 +3,7 @@
 namespace Modules\Institute\Application\Services;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Modules\Institute\Domain\Events\InstituteUpdated;
 use Modules\Institute\Domain\Models\Institute;
 use Modules\Tenant\Application\Services\TenantContextService;
 
@@ -63,6 +64,7 @@ class InstituteService
 
         if ($payload !== []) {
             $institute->update($payload);
+            event(new InstituteUpdated($institute->id, auth()->id()));
         }
 
         return $institute->refresh();

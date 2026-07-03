@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Modules\Enrollment\Domain\Models\StudentEnrollment;
+use Modules\Enrollment\Domain\Models\TeacherAssignment;
 use Modules\Institute\Domain\Models\AcademicSession;
 
 class AcademicClass extends Model
@@ -43,5 +45,15 @@ class AcademicClass extends Model
     public function batches(): HasMany
     {
         return $this->hasMany(Batch::class, 'class_id');
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(StudentEnrollment::class, 'class_id');
+    }
+
+    public function teacherAssignments(): HasMany
+    {
+        return $this->hasMany(TeacherAssignment::class, 'class_id');
     }
 }

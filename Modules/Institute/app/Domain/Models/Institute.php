@@ -2,6 +2,7 @@
 
 namespace Modules\Institute\Domain\Models;
 
+use App\Support\Tenancy\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -12,7 +13,7 @@ use Modules\Tenant\Domain\Models\Tenant;
 
 class Institute extends Model
 {
-    use HasFactory;
+    use HasFactory, BelongsToTenant;
 
     protected $table = 'institutes';
 

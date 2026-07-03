@@ -7,6 +7,8 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Modules\Academic\Domain\Models\AcademicClass;
+use Modules\Enrollment\Domain\Models\StudentEnrollment;
+use Modules\Enrollment\Domain\Models\TeacherAssignment;
 use Modules\Institute\Domain\Enums\AcademicSessionStatus;
 
 class AcademicSession extends Model
@@ -46,5 +48,15 @@ class AcademicSession extends Model
     public function classes(): HasMany
     {
         return $this->hasMany(AcademicClass::class, 'academic_session_id');
+    }
+
+    public function enrollments(): HasMany
+    {
+        return $this->hasMany(StudentEnrollment::class, 'academic_session_id');
+    }
+
+    public function teacherAssignments(): HasMany
+    {
+        return $this->hasMany(TeacherAssignment::class, 'academic_session_id');
     }
 }

@@ -51,7 +51,18 @@ class TenantResolverService
         }
 
         // Strategy 5: Primary domain lookup
-        return $this->tenantRepository->findByDomain($host);
+        $tenant = $this->tenantRepository->findByDomain($host);
+
+        if ($tenant !== null) {
+            return $tenant;
+        }
+
+        // Strategy 6: Local development fallback
+        if (app()->environment('local') && in_array($host, ['127.0.0.1', 'localhost'], true)) {
+            return $this->tenantRepository->allActive()->first();
+        }
+
+        return null;
     }
 
     private function resolveFromSubdomain(string $host): ?Tenant

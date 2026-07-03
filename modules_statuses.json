@@ -4,5 +4,9 @@
     "Tenant": true,
     "Institute": true,
     "Settings": true,
-    "Academic": true
+    "Academic": true,
+    "Student": true,
+    "Teacher": true,
+    "Parent": true,
+    "Enrollment": true
 }

@@ -2,6 +2,7 @@
 
 namespace Modules\Tenant\Infrastructure\Repositories;
 
+use Illuminate\Support\Facades\Schema;
 use Illuminate\Support\Collection;
 use Modules\Tenant\Application\Contracts\TenantRepositoryInterface;
 use Modules\Tenant\Domain\Models\Tenant;
@@ -25,6 +26,10 @@ class EloquentTenantRepository implements TenantRepositoryInterface
 
     public function findByCustomDomain(string $domain): ?Tenant
     {
+        if (! Schema::hasColumn('tenants', 'custom_domain')) {
+            return null;
+        }
+
         return Tenant::query()->where('custom_domain', $domain)->first();
     }
 

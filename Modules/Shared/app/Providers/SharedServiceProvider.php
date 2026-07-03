@@ -4,9 +4,18 @@ namespace Modules\Shared\Providers;
 
 use Nwidart\Modules\Support\ModuleServiceProvider;
 use Illuminate\Console\Scheduling\Schedule;
+use Modules\Shared\Application\Contracts\SharedLookupServiceInterface;
+use Modules\Shared\Application\Services\SharedLookupService;
 
 class SharedServiceProvider extends ModuleServiceProvider
 {
+    public function register(): void
+    {
+        parent::register();
+
+        $this->app->bind(SharedLookupServiceInterface::class, SharedLookupService::class);
+    }
+
     /**
      * The name of the module.
      */

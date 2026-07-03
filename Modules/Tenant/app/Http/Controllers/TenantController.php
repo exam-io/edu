@@ -9,7 +9,9 @@ use Modules\Tenant\Application\Services\TenantConfigurationService;
 use Modules\Tenant\Application\Services\TenantContextService;
 use Modules\Tenant\Application\Services\ProvisionTenantDto;
 use Modules\Tenant\Application\Services\TenantProvisioningService;
+use Modules\Tenant\Domain\Events\TenantSettingsUpdated;
 use Modules\Tenant\Http\Requests\ProvisionTenantRequest;
+use Modules\Tenant\Http\Requests\UpdateTenantSettingsRequest;
 use Modules\Tenant\Http\Resources\TenantResource;
 use Modules\Tenant\Http\Resources\TenantSettingResource;
 
@@ -101,9 +103,10 @@ class TenantController extends Controller
      * Update tenant settings.
      */
     public function updateSettings(
-        ProvisionTenantRequest $request,
+        UpdateTenantSettingsRequest $request,
         TenantContextService $contextService,
         TenantBrandingService $brandingService,
+        TenantConfigurationService $configurationService,
     ): JsonResponse {
         $tenant = $contextService->requiredTenant();
 
@@ -126,6 +129,9 @@ class TenantController extends Controller
         ], fn ($value) => $value !== null));
 
         $brandingService->invalidateBrandingCache($tenant);
+        $configurationService->invalidateConfigCache($tenant);
+
+        event(new TenantSettingsUpdated($tenant->id));
 
         return response()->json([
             'success' => true,

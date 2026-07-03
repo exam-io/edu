@@ -1,0 +1,11 @@
+{
+    "name": "Teacher",
+    "alias": "teacher",
+    "description": "User management - teachers",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Teacher\\Providers\\TeacherServiceProvider"
+    ],
+    "files": []
+}

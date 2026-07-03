@@ -7,10 +7,13 @@ use Modules\Tenant\Domain\Events\TenantActivated;
 use Modules\Tenant\Domain\Events\TenantCreated;
 use Modules\Tenant\Domain\Events\TenantSettingsUpdated;
 use Modules\Tenant\Domain\Events\TenantSuspended;
-use Modules\Tenant\Listeners\InitializeTenantStorage;
+use Modules\Tenant\Listeners\CreateTenantDefaults;
+use Modules\Tenant\Listeners\CreateTenantRoles;
+use Modules\Tenant\Listeners\InitializeTenantSettings;
 use Modules\Tenant\Listeners\InvalidateTenantCaches;
 use Modules\Tenant\Listeners\LogTenantResolved;
 use Modules\Tenant\Listeners\LogTenantStatusChange;
+use Modules\Tenant\Listeners\PrepareTenantStorage;
 use Modules\Tenant\Domain\Events\TenantResolved;
 
 class EventServiceProvider extends ServiceProvider
@@ -25,7 +28,10 @@ class EventServiceProvider extends ServiceProvider
             LogTenantResolved::class,
         ],
         TenantCreated::class => [
-            InitializeTenantStorage::class,
+            CreateTenantDefaults::class,
+            InitializeTenantSettings::class,
+            CreateTenantRoles::class,
+            PrepareTenantStorage::class,
         ],
         TenantActivated::class => [
             LogTenantStatusChange::class,
@@ -43,7 +49,7 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var bool
      */
-    protected static $shouldDiscoverEvents = true;
+    protected static $shouldDiscoverEvents = false;
 
     /**
      * Configure the proper event listeners for email verification.

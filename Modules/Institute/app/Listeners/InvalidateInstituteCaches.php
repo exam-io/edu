@@ -4,6 +4,7 @@ namespace Modules\Institute\Listeners;
 
 use Modules\Institute\Application\Services\InstituteBrandingService;
 use Modules\Institute\Application\Services\InstituteConfigurationService;
+use Modules\Institute\Domain\Events\BrandingUpdated;
 use Modules\Institute\Domain\Events\InstituteBrandingUpdated;
 
 class InvalidateInstituteCaches
@@ -13,7 +14,7 @@ class InvalidateInstituteCaches
         private readonly InstituteConfigurationService $configurationService,
     ) {}
 
-    public function handle(InstituteBrandingUpdated $event): void
+    public function handle(InstituteBrandingUpdated|BrandingUpdated $event): void
     {
         $this->brandingService->invalidateCache($event->instituteId);
         $this->configurationService->invalidateCache($event->instituteId);
