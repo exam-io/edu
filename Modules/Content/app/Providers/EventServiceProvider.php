@@ -3,6 +3,9 @@
 namespace Modules\Content\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Content\Domain\Events\ContentItemPublished;
+use Modules\Content\Listeners\LogContentActivity;
+use Modules\Content\Listeners\NotifyProgressRecalculation;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,14 +14,19 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        ContentItemPublished::class => [
+            LogContentActivity::class,
+            NotifyProgressRecalculation::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.
      *
      * @var bool
      */
-    protected static $shouldDiscoverEvents = true;
+    protected static $shouldDiscoverEvents = false;
 
     /**
      * Configure the proper event listeners for email verification.

@@ -3,54 +3,70 @@
 namespace Modules\Media\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Modules\Media\Application\Contracts\MediaServiceInterface;
+use Modules\Media\Application\DTOs\MediaListQueryData;
+use Modules\Media\Application\DTOs\MediaMutationData;
+use Modules\Media\Http\Requests\MediaIndexRequest;
+use Modules\Media\Http\Requests\MediaStoreRequest;
+use Modules\Media\Http\Requests\MediaUpdateRequest;
+use Modules\Media\Http\Resources\MediaAssetResource;
 
 class MediaController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(MediaIndexRequest $request, MediaServiceInterface $service): JsonResponse
     {
-        return view('media::index');
+        $data = $service->list(MediaListQueryData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'data' => MediaAssetResource::collection($data),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(MediaStoreRequest $request, MediaServiceInterface $service): JsonResponse
     {
-        return view('media::create');
+        $asset = $service->create(MediaMutationData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Media uploaded successfully.',
+            'data' => new MediaAssetResource($asset),
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
+    public function show(int $id, MediaServiceInterface $service): JsonResponse
     {
-        return view('media::show');
+        return response()->json([
+            'success' => true,
+            'data' => new MediaAssetResource($service->find($id)),
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function update(int $id, MediaUpdateRequest $request, MediaServiceInterface $service): JsonResponse
     {
-        return view('media::edit');
+        $asset = $service->update($id, MediaMutationData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Media updated successfully.',
+            'data' => new MediaAssetResource($asset),
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
+    public function destroy(int $id, MediaServiceInterface $service): JsonResponse
+    {
+        $service->delete($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
+        return response()->json([
+            'success' => true,
+            'message' => 'Media deleted successfully.',
+        ]);
+    }
 }

@@ -32,6 +32,7 @@ class ContentServiceProvider extends ModuleServiceProvider
     protected array $providers = [
         EventServiceProvider::class,
         RouteServiceProvider::class,
+        ContentBindingsServiceProvider::class,
     ];
 
     /**

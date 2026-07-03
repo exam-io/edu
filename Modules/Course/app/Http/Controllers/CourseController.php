@@ -3,54 +3,70 @@
 namespace Modules\Course\Http\Controllers;
 
 use App\Http\Controllers\Controller;
-use Illuminate\Http\Request;
+use Illuminate\Http\JsonResponse;
+use Modules\Course\Application\Contracts\CourseServiceInterface;
+use Modules\Course\Application\DTOs\CourseListQueryData;
+use Modules\Course\Application\DTOs\CourseMutationData;
+use Modules\Course\Http\Requests\CourseIndexRequest;
+use Modules\Course\Http\Requests\CourseStoreRequest;
+use Modules\Course\Http\Requests\CourseUpdateRequest;
+use Modules\Course\Http\Resources\CourseResource;
 
 class CourseController extends Controller
 {
-    /**
-     * Display a listing of the resource.
-     */
-    public function index()
+    public function index(CourseIndexRequest $request, CourseServiceInterface $service): JsonResponse
     {
-        return view('course::index');
+        $data = $service->list(CourseListQueryData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'data' => CourseResource::collection($data),
+            'meta' => [
+                'current_page' => $data->currentPage(),
+                'last_page' => $data->lastPage(),
+                'per_page' => $data->perPage(),
+                'total' => $data->total(),
+            ],
+        ]);
     }
 
-    /**
-     * Show the form for creating a new resource.
-     */
-    public function create()
+    public function store(CourseStoreRequest $request, CourseServiceInterface $service): JsonResponse
     {
-        return view('course::create');
+        $course = $service->create(CourseMutationData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course created successfully.',
+            'data' => new CourseResource($course),
+        ], 201);
     }
 
-    /**
-     * Store a newly created resource in storage.
-     */
-    public function store(Request $request) {}
-
-    /**
-     * Show the specified resource.
-     */
-    public function show($id)
+    public function show(int $id, CourseServiceInterface $service): JsonResponse
     {
-        return view('course::show');
+        return response()->json([
+            'success' => true,
+            'data' => new CourseResource($service->find($id)),
+        ]);
     }
 
-    /**
-     * Show the form for editing the specified resource.
-     */
-    public function edit($id)
+    public function update(int $id, CourseUpdateRequest $request, CourseServiceInterface $service): JsonResponse
     {
-        return view('course::edit');
+        $course = $service->update($id, CourseMutationData::fromArray($request->validated()));
+
+        return response()->json([
+            'success' => true,
+            'message' => 'Course updated successfully.',
+            'data' => new CourseResource($course),
+        ]);
     }
 
-    /**
-     * Update the specified resource in storage.
-     */
-    public function update(Request $request, $id) {}
+    public function destroy(int $id, CourseServiceInterface $service): JsonResponse
+    {
+        $service->delete($id);
 
-    /**
-     * Remove the specified resource from storage.
-     */
-    public function destroy($id) {}
+        return response()->json([
+            'success' => true,
+            'message' => 'Course deleted successfully.',
+        ]);
+    }
 }

@@ -32,6 +32,7 @@ class LMSServiceProvider extends ModuleServiceProvider
     protected array $providers = [
         EventServiceProvider::class,
         RouteServiceProvider::class,
+        LmsBindingsServiceProvider::class,
     ];
 
     /**

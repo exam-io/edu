@@ -43,6 +43,10 @@ import {
     TeacherAssignmentsListPage,
 } from '@modules/enrollments';
 import { SettingsPage } from '@modules/settings';
+import { CoursesPage } from '@modules/course';
+import { ContentLibraryPage } from '@modules/content';
+import { MediaLibraryPage } from '@modules/media';
+import { LmsOverviewPage } from '@modules/lms';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 
@@ -87,6 +91,11 @@ export function AppRoutes() {
                             <Route path="/enrollments" element={<EnrollmentsListPage />} />
                             <Route path="/enrollments/create" element={<EnrollmentCreatePage />} />
                             <Route path="/enrollments/:id/edit" element={<EnrollmentEditPage />} />
+
+                            <Route path="/courses" element={<CoursesPage />} />
+                            <Route path="/content" element={<ContentLibraryPage />} />
+                            <Route path="/media" element={<MediaLibraryPage />} />
+                            <Route path="/lms" element={<LmsOverviewPage />} />
 
                             <Route path="/teacher-assignments" element={<TeacherAssignmentsListPage />} />
                             <Route path="/teacher-assignments/create" element={<TeacherAssignmentCreatePage />} />
