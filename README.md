@@ -249,3 +249,9 @@ This step does not include:
 - mobile apps
 
 This repository is the foundational platform skeleton for future vertical implementation.
+
+## Step 8 Remaining TODO
+
+Step 8 hardening and production follow-up tasks are tracked in:
+
+- `docs/STEP8_REMAINING_TODO.md`

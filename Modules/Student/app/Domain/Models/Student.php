@@ -4,7 +4,7 @@ namespace Modules\Student\Domain\Models;
 
 use App\Models\User;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
@@ -12,7 +12,7 @@ use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Enrollment\Domain\Models\StudentEnrollment;
 use Modules\Parent\Domain\Models\ParentProfile;
 
-class Student extends Model
+class Student extends TenantAwareModel
 {
     use HasFactory, SoftDeletes;
 

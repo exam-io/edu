@@ -3,11 +3,11 @@
 namespace Modules\LMS\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\SoftDeletes;
 
-class CourseEnrollment extends Model
+class CourseEnrollment extends TenantAwareModel
 {
     use HasFactory, SoftDeletes;
 

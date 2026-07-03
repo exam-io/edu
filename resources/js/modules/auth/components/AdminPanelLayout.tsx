@@ -1,5 +1,5 @@
-import { useEffect, useMemo, useState } from 'react';
-import { NavLink, Outlet, useLocation } from 'react-router-dom';
+import { useMemo, useState } from 'react';
+import { NavLink, Outlet } from 'react-router-dom';
 import { useAuthStore } from '@modules/auth/store/authStore';
 
 interface NavItem {
@@ -28,7 +28,6 @@ function getPanelTitle(roles: string[]): string {
 }
 
 export function AdminPanelLayout() {
-    const location = useLocation();
     const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
     const user = useAuthStore((state) => state.user);
     const roles = useAuthStore((state) => state.roles);
@@ -36,10 +35,6 @@ export function AdminPanelLayout() {
 
     const panelTitle = useMemo(() => getPanelTitle(roles), [roles]);
     const roleText = roles.length > 0 ? roles.join(', ') : 'User';
-
-    useEffect(() => {
-        setMobileMenuOpen(false);
-    }, [location.pathname]);
 
     return (
         <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -69,6 +64,7 @@ export function AdminPanelLayout() {
                             <NavLink
                                 key={item.path}
                                 to={item.path}
+                                onClick={() => setMobileMenuOpen(false)}
                                 className={({ isActive }) =>
                                     `block rounded-lg px-3 py-2 text-sm font-medium transition ${
                                         isActive

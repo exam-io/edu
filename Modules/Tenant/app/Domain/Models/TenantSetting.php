@@ -3,10 +3,10 @@
 namespace Modules\Tenant\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class TenantSetting extends Model
+class TenantSetting extends TenantAwareModel
 {
     use HasFactory;
 

@@ -3,10 +3,10 @@
 namespace Modules\Media\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 
-class MediaAssetLink extends Model
+class MediaAssetLink extends TenantAwareModel
 {
     use HasFactory;
 

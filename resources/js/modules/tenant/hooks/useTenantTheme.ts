@@ -1,5 +1,4 @@
 import { useEffect } from 'react';
-import type { TenantBranding } from '@modules/tenant/types/tenant';
 import { useTenantStore } from '@modules/tenant/store/tenantStore';
 import { useThemeStore } from '@stores/themeStore';
 import { useMemo } from 'react';

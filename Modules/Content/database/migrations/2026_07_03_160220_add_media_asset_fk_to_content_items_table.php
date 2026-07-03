@@ -13,6 +13,10 @@ return new class extends Migration
             return;
         }
 
+        if (DB::getDriverName() !== 'mysql') {
+            return;
+        }
+
         $database = DB::getDatabaseName();
         $foreignExists = DB::table('information_schema.KEY_COLUMN_USAGE')
             ->where('TABLE_SCHEMA', $database)
@@ -36,6 +40,10 @@ return new class extends Migration
     public function down(): void
     {
         if (! Schema::hasTable('content_items')) {
+            return;
+        }
+
+        if (DB::getDriverName() !== 'mysql') {
             return;
         }
 

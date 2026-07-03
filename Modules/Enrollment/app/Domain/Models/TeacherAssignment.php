@@ -3,7 +3,7 @@
 namespace Modules\Enrollment\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Academic\Domain\Models\AcademicClass;
 use Modules\Academic\Domain\Models\Batch;
@@ -12,7 +12,7 @@ use Modules\Academic\Domain\Models\Subject;
 use Modules\Institute\Domain\Models\AcademicSession;
 use Modules\Teacher\Domain\Models\Teacher;
 
-class TeacherAssignment extends Model
+class TeacherAssignment extends TenantAwareModel
 {
     use HasFactory;
 

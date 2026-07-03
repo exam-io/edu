@@ -2,18 +2,17 @@
 
 namespace Modules\Institute\Domain\Models;
 
-use App\Support\Tenancy\Traits\BelongsToTenant;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Modules\Institute\Domain\Enums\InstituteStatus;
 use Modules\Tenant\Domain\Models\Tenant;
 
-class Institute extends Model
+class Institute extends TenantAwareModel
 {
-    use HasFactory, BelongsToTenant;
+    use HasFactory;
 
     protected $table = 'institutes';
 

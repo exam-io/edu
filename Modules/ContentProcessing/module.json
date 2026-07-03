@@ -1,0 +1,11 @@
+{
+    "name": "ContentProcessing",
+    "alias": "contentprocessing",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\ContentProcessing\\Providers\\ContentProcessingServiceProvider"
+    ],
+    "files": []
+}

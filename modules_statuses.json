@@ -12,5 +12,8 @@
     "Course": true,
     "LMS": true,
     "Media": true,
-    "Content": true
+    "Content": true,
+    "AI": true,
+    "QuestionBank": true,
+    "ContentProcessing": true
 }

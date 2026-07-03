@@ -3,7 +3,7 @@
 namespace Modules\Academic\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
@@ -11,7 +11,7 @@ use Modules\Enrollment\Domain\Models\StudentEnrollment;
 use Modules\Enrollment\Domain\Models\TeacherAssignment;
 use Modules\Institute\Domain\Models\AcademicSession;
 
-class AcademicClass extends Model
+class AcademicClass extends TenantAwareModel
 {
     use HasFactory, SoftDeletes;
 

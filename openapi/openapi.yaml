@@ -1,8 +1,8 @@
 openapi: 3.1.0
 info:
   title: EduOS API
-  version: 1.0.0
-  description: Step 1 API foundation for EduOS modular monolith.
+  version: 1.1.0
+  description: Step 8 API foundation for EduOS modular monolith.
 servers:
   - url: /api/v1
 paths:
@@ -56,3 +56,248 @@ paths:
             application/yaml:
               schema:
                 type: string
+  /content-sources:
+    get:
+      operationId: listContentSources
+      summary: List tenant content sources
+      tags: [ContentProcessing]
+      responses:
+        '200':
+          description: Content source list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentSourceListResponse'
+    post:
+      operationId: createContentSource
+      summary: Upload or register a content source
+      tags: [ContentProcessing]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/ContentSourceCreateRequest'
+      responses:
+        '201':
+          description: Content source created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ContentSourceSingleResponse'
+  /ai-generation-requests:
+    get:
+      operationId: listAIGenerationRequests
+      summary: List AI generation requests
+      tags: [AI]
+      responses:
+        '200':
+          description: AI request list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIGenerationRequestListResponse'
+    post:
+      operationId: createAIGenerationRequest
+      summary: Queue AI generation request
+      tags: [AI]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AIGenerationCreateRequest'
+      responses:
+        '201':
+          description: AI request queued
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AIGenerationRequestSingleResponse'
+  /question-sets:
+    get:
+      operationId: listQuestionSets
+      summary: List question sets
+      tags: [QuestionBank]
+      responses:
+        '200':
+          description: Question set list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionSetListResponse'
+    post:
+      operationId: createQuestionSet
+      summary: Create question set
+      tags: [QuestionBank]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/QuestionSetCreateRequest'
+      responses:
+        '201':
+          description: Question set created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/QuestionSetSingleResponse'
+components:
+  schemas:
+    PaginationMeta:
+      type: object
+      properties:
+        current_page:
+          type: integer
+        last_page:
+          type: integer
+        per_page:
+          type: integer
+        total:
+          type: integer
+    ContentSource:
+      type: object
+      properties:
+        id:
+          type: integer
+        tenant_id:
+          type: integer
+        title:
+          type: string
+        source_type:
+          type: string
+          enum: [upload, url, text]
+        status:
+          type: string
+          enum: [queued, processing, processed, failed]
+    ContentSourceCreateRequest:
+      type: object
+      required: [title, source_type]
+      properties:
+        title:
+          type: string
+        source_type:
+          type: string
+          enum: [upload, url, text]
+        source_url:
+          type: string
+          format: uri
+        raw_text:
+          type: string
+    ContentSourceListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/ContentSource'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    ContentSourceSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/ContentSource'
+    AIGenerationRequest:
+      type: object
+      properties:
+        id:
+          type: integer
+        generation_type:
+          type: string
+          enum: [questions, notes, summary]
+        status:
+          type: string
+          enum: [queued, processing, completed, failed]
+        content_source_id:
+          type: integer
+          nullable: true
+    AIGenerationCreateRequest:
+      type: object
+      required: [generation_type]
+      properties:
+        generation_type:
+          type: string
+          enum: [questions, notes, summary]
+        content_source_id:
+          type: integer
+          nullable: true
+        prompt_text:
+          type: string
+    AIGenerationRequestListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AIGenerationRequest'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    AIGenerationRequestSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AIGenerationRequest'
+    QuestionSet:
+      type: object
+      properties:
+        id:
+          type: integer
+        title:
+          type: string
+        question_type:
+          type: string
+        difficulty:
+          type: string
+        total_questions:
+          type: integer
+        status:
+          type: string
+    QuestionSetCreateRequest:
+      type: object
+      required: [title]
+      properties:
+        title:
+          type: string
+        question_type:
+          type: string
+        difficulty:
+          type: string
+        questions:
+          type: array
+          items:
+            type: object
+            properties:
+              stem:
+                type: string
+              question_type:
+                type: string
+              difficulty:
+                type: string
+    QuestionSetListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/QuestionSet'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    QuestionSetSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/QuestionSet'

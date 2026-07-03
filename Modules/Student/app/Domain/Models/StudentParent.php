@@ -3,11 +3,11 @@
 namespace Modules\Student\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Modules\Parent\Domain\Models\ParentProfile;
 
-class StudentParent extends Model
+class StudentParent extends TenantAwareModel
 {
     use HasFactory;
 

@@ -47,6 +47,9 @@ import { CoursesPage } from '@modules/course';
 import { ContentLibraryPage } from '@modules/content';
 import { MediaLibraryPage } from '@modules/media';
 import { LmsOverviewPage } from '@modules/lms';
+import { AIGenerationPage } from '@modules/ai';
+import { ContentProcessingPage } from '@modules/content-processing';
+import { QuestionBankPage } from '@modules/question-bank';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 
@@ -96,6 +99,9 @@ export function AppRoutes() {
                             <Route path="/content" element={<ContentLibraryPage />} />
                             <Route path="/media" element={<MediaLibraryPage />} />
                             <Route path="/lms" element={<LmsOverviewPage />} />
+                            <Route path="/ai" element={<AIGenerationPage />} />
+                            <Route path="/content-processing" element={<ContentProcessingPage />} />
+                            <Route path="/question-bank" element={<QuestionBankPage />} />
 
                             <Route path="/teacher-assignments" element={<TeacherAssignmentsListPage />} />
                             <Route path="/teacher-assignments/create" element={<TeacherAssignmentCreatePage />} />

@@ -3,14 +3,14 @@
 namespace Modules\Academic\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
-use Illuminate\Database\Eloquent\Model;
+use Modules\Shared\Domain\Models\TenantAwareModel;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Enrollment\Domain\Models\StudentEnrollment;
 use Modules\Enrollment\Domain\Models\TeacherAssignment;
 
-class Section extends Model
+class Section extends TenantAwareModel
 {
     use HasFactory, SoftDeletes;
 

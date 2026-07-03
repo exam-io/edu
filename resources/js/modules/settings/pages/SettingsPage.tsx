@@ -6,25 +6,17 @@ type Language = 'en' | 'hi';
 
 export function SettingsPage() {
     const { setting, loading, error, initialize, save } = useSettings();
-    const [language, setLanguage] = useState<Language>('en');
-    const [theme, setTheme] = useState<Theme>('light');
-    const [timezone, setTimezone] = useState('UTC');
+    const [draft, setDraft] = useState<Partial<{ language: Language; theme: Theme; timezone: string }>>({});
     const [saving, setSaving] = useState(false);
     const [message, setMessage] = useState<string | null>(null);
+
+    const language: Language = draft.language ?? setting?.language ?? 'en';
+    const theme: Theme = draft.theme ?? setting?.theme ?? 'light';
+    const timezone = draft.timezone ?? setting?.timezone ?? 'UTC';
 
     useEffect(() => {
         void initialize();
     }, [initialize]);
-
-    useEffect(() => {
-        if (!setting) {
-            return;
-        }
-
-        setLanguage(setting.language);
-        setTheme(setting.theme);
-        setTimezone(setting.timezone);
-    }, [setting]);
 
     async function handleSubmit(event: FormEvent<HTMLFormElement>) {
         event.preventDefault();
@@ -34,6 +26,7 @@ export function SettingsPage() {
 
         try {
             await save({ language, theme, timezone });
+            setDraft({});
             setMessage('Settings updated successfully.');
         } catch (submitError) {
             setMessage(submitError instanceof Error ? submitError.message : 'Unable to update settings.');
@@ -61,7 +54,7 @@ export function SettingsPage() {
                     <span className="font-medium">Language</span>
                     <select
                         value={language}
-                        onChange={(event) => setLanguage(event.target.value as Language)}
+                        onChange={(event) => setDraft((current) => ({ ...current, language: event.target.value as Language }))}
                         className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2"
                     >
                         <option value="en">English</option>
@@ -73,7 +66,7 @@ export function SettingsPage() {
                     <span className="font-medium">Theme</span>
                     <select
                         value={theme}
-                        onChange={(event) => setTheme(event.target.value as Theme)}
+                        onChange={(event) => setDraft((current) => ({ ...current, theme: event.target.value as Theme }))}
                         className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2"
                     >
                         <option value="light">Light</option>
@@ -85,7 +78,7 @@ export function SettingsPage() {
                     <span className="font-medium">Timezone</span>
                     <input
                         value={timezone}
-                        onChange={(event) => setTimezone(event.target.value)}
+                        onChange={(event) => setDraft((current) => ({ ...current, timezone: event.target.value }))}
                         className="rounded-md border border-[var(--color-border)] bg-white px-3 py-2"
                         placeholder="UTC"
                     />
