@@ -1,0 +1,12 @@
+<?php
+
+namespace Modules\Identity\Events;
+
+readonly class UserLoggedOut
+{
+    public function __construct(
+        public int $userId,
+        public ?int $tenantId,
+    ) {
+    }
+}

@@ -1,0 +1,58 @@
+openapi: 3.1.0
+info:
+  title: EduOS API
+  version: 1.0.0
+  description: Step 1 API foundation for EduOS modular monolith.
+servers:
+  - url: /api/v1
+paths:
+  /health:
+    get:
+      operationId: getHealth
+      summary: Tenant-aware health check
+      tags: [Platform]
+      responses:
+        '200':
+          description: Health response
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: ok
+                  tenant:
+                    type: string
+                    nullable: true
+                  timestamp:
+                    type: string
+                    format: date-time
+  /openapi:
+    get:
+      operationId: getOpenApiSpec
+      summary: Return OpenAPI specification URL metadata
+      tags: [Platform]
+      responses:
+        '200':
+          description: OpenAPI metadata
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  spec_url:
+                    type: string
+                    example: /api/v1/openapi.yaml
+  /openapi.yaml:
+    get:
+      operationId: downloadOpenApiSpec
+      summary: Download OpenAPI YAML document
+      tags: [Platform]
+      responses:
+        '200':
+          description: OpenAPI yaml document
+          content:
+            application/yaml:
+              schema:
+                type: string
