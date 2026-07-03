@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Student\Http\Controllers\StudentController;
 
-Route::middleware(['tenant', 'auth:sanctum'])->group(function (): void {
+Route::middleware(['tenant', 'tenant.context', 'tenant.active', 'tenant.scope', 'auth:sanctum'])->group(function (): void {
     Route::get('students', [StudentController::class, 'index'])->middleware('identity.permission:student.view');
     Route::post('students', [StudentController::class, 'store'])->middleware('identity.permission:student.create');
     Route::get('students/{id}', [StudentController::class, 'show'])->middleware('identity.permission:student.view');

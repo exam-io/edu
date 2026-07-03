@@ -30,11 +30,11 @@ class UserManagementPermissionSeeder extends Seeder
         'enrollment.create',
         'enrollment.update',
         'enrollment.delete',
-        'teacher-assignment.*',
-        'teacher-assignment.view',
-        'teacher-assignment.create',
-        'teacher-assignment.update',
-        'teacher-assignment.delete',
+        'teacher_assignment.*',
+        'teacher_assignment.view',
+        'teacher_assignment.create',
+        'teacher_assignment.update',
+        'teacher_assignment.delete',
     ];
 
     public function run(): void

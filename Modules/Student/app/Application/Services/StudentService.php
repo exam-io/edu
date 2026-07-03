@@ -7,22 +7,21 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
-use Modules\Parent\Domain\Models\ParentProfile;
+use Modules\Student\Application\Contracts\StudentRelationshipServiceInterface;
 use Modules\Student\Application\Contracts\StudentServiceInterface;
 use Modules\Student\Application\Contracts\StudentTenantRepositoryInterface;
 use Modules\Student\Application\DTOs\StudentListQueryData;
 use Modules\Student\Application\DTOs\StudentMutationData;
-use Modules\Student\Domain\Events\ParentLinkedToStudent;
 use Modules\Student\Domain\Events\StudentCreated;
 use Modules\Student\Domain\Events\StudentUpdated;
 use Modules\Student\Domain\Models\Student;
-use Modules\Student\Domain\Models\StudentParent;
 use Modules\Tenant\Application\Services\TenantContextService;
 
 class StudentService implements StudentServiceInterface
 {
     public function __construct(
         private readonly StudentTenantRepositoryInterface $repository,
+        private readonly StudentRelationshipServiceInterface $relationshipService,
         private readonly TenantContextService $tenantContext,
     ) {}
 
@@ -64,7 +63,7 @@ class StudentService implements StudentServiceInterface
             /** @var Student $student */
             $student = $this->repository->create(Student::class, $attributes);
 
-            $this->syncParents($student, is_array($parentIds) ? $parentIds : [], $primaryParentId);
+            $this->relationshipService->syncParents($student, is_array($parentIds) ? $parentIds : [], $primaryParentId);
 
             Event::dispatch(new StudentCreated($student->id, $student->tenant_id, $provisionLogin));
 
@@ -91,7 +90,7 @@ class StudentService implements StudentServiceInterface
             $updated = $this->repository->update($student, $attributes);
 
             if (is_array($parentIds)) {
-                $this->syncParents($updated, $parentIds, $primaryParentId);
+                $this->relationshipService->syncParents($updated, $parentIds, $primaryParentId);
             }
 
             Event::dispatch(new StudentUpdated($updated->id, $updated->tenant_id));
@@ -104,46 +103,6 @@ class StudentService implements StudentServiceInterface
     {
         $student = $this->find($id);
         $this->repository->delete($student);
-    }
-
-    private function syncParents(Student $student, array $parentIds, mixed $primaryParentId): void
-    {
-        $tenantId = $this->tenantId();
-        $sanitizedParentIds = collect($parentIds)
-            ->map(static fn ($id) => (int) $id)
-            ->filter(static fn (int $id) => $id > 0)
-            ->unique()
-            ->values();
-
-        if ($sanitizedParentIds->isEmpty()) {
-            return;
-        }
-
-        $count = ParentProfile::query()
-            ->where('tenant_id', $tenantId)
-            ->whereIn('id', $sanitizedParentIds->all())
-            ->count();
-
-        if ($count !== $sanitizedParentIds->count()) {
-            throw ValidationException::withMessages([
-                'parent_ids' => ['All parents must belong to tenant.'],
-            ]);
-        }
-
-        StudentParent::query()->where('tenant_id', $tenantId)->where('student_id', $student->id)->delete();
-
-        $primaryParentId = $primaryParentId !== null ? (int) $primaryParentId : null;
-
-        foreach ($sanitizedParentIds as $parentId) {
-            StudentParent::query()->create([
-                'tenant_id' => $tenantId,
-                'student_id' => $student->id,
-                'parent_id' => $parentId,
-                'is_primary' => $primaryParentId !== null && $primaryParentId === $parentId,
-            ]);
-
-            Event::dispatch(new ParentLinkedToStudent($student->id, $parentId, $tenantId));
-        }
     }
 
     private function ensureUniqueAdmissionNo(string $admissionNo, ?int $ignoreId = null): void

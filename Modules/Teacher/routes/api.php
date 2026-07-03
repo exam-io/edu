@@ -3,7 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use Modules\Teacher\Http\Controllers\TeacherController;
 
-Route::middleware(['tenant', 'auth:sanctum'])->group(function (): void {
+Route::middleware(['tenant', 'tenant.context', 'tenant.active', 'tenant.scope', 'auth:sanctum'])->group(function (): void {
     Route::get('teachers', [TeacherController::class, 'index'])->middleware('identity.permission:teacher.view');
     Route::post('teachers', [TeacherController::class, 'store'])->middleware('identity.permission:teacher.create');
     Route::get('teachers/{id}', [TeacherController::class, 'show'])->middleware('identity.permission:teacher.view');
