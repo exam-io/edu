@@ -180,6 +180,41 @@ php artisan migrate
 php artisan db:seed
 ```
 
+### Demo Tenants and Users
+
+The project includes a dedicated seeder for realistic multi-tenant demo access:
+
+- Seeder: `Database\\Seeders\\DemoUsersSeeder`
+- Run only demo users/tenants seeder:
+
+```bash
+php artisan db:seed --class='Database\Seeders\DemoUsersSeeder'
+```
+
+Demo credentials:
+
+- Shared password for all accounts: `password123`
+
+Demo tenants:
+
+- `north-campus-demo.edus.test` (`north-campus-demo`)
+- `south-campus-demo.edus.test` (`south-campus-demo`)
+
+Demo accounts:
+
+| Email | Role | Tenant | Status |
+| --- | --- | --- | --- |
+| `admin.demo@edus.test` | Super Admin | North Campus Demo | active |
+| `manager.demo@edus.test` | Institute Admin | North Campus Demo | active |
+| `coordinator.demo@edus.test` | Institute Admin | North Campus Demo | active |
+| `admissions.demo@edus.test` | Institute Admin | North Campus Demo | active |
+| `faculty.demo@edus.test` | Teacher | North Campus Demo | active |
+| `registrar.demo@edus.test` | Institute Admin | South Campus Demo | active |
+| `student.demo@edus.test` | Student | South Campus Demo | active |
+| `parent.demo@edus.test` | Parent | South Campus Demo | active |
+| `inactive.demo@edus.test` | Student | South Campus Demo | inactive |
+| `suspended.demo@edus.test` | Parent | South Campus Demo | suspended |
+
 4. Run development stack:
 
 ```bash
