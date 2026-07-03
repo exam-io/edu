@@ -1,18 +1,16 @@
 import { useEffect, type PropsWithChildren } from 'react';
 import { useThemeStore } from '@stores/themeStore';
-import { useTenantTheme } from '@hooks/useTenantTheme';
+import { useTenantBrandingEffect } from '@modules/tenant';
 
 export function ThemeProvider({ children }: PropsWithChildren) {
     const theme = useThemeStore((state) => state.theme);
-    const variables = useTenantTheme();
+    
+    // Apply tenant branding (colors and CSS variables)
+    useTenantBrandingEffect();
 
     useEffect(() => {
         document.documentElement.setAttribute('data-theme', theme);
-
-        Object.entries(variables).forEach(([key, value]) => {
-            document.documentElement.style.setProperty(key, value);
-        });
-    }, [theme, variables]);
+    }, [theme]);
 
     return <>{children}</>;
 }

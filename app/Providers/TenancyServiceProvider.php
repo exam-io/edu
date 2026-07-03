@@ -13,6 +13,7 @@ use App\Support\Tenancy\Isolation\TenantStorageIsolation;
 use App\Support\Tenancy\Resolvers\DomainTenantResolver;
 use App\Support\Tenancy\TenantContext;
 use Illuminate\Support\ServiceProvider;
+use Modules\Tenant\Application\Services\TenantResolverService;
 
 class TenancyServiceProvider extends ServiceProvider
 {
@@ -24,5 +25,8 @@ class TenancyServiceProvider extends ServiceProvider
         $this->app->bind(StorageIsolationInterface::class, TenantStorageIsolation::class);
         $this->app->bind(CacheIsolationInterface::class, TenantCacheIsolation::class);
         $this->app->bind(QueueIsolationInterface::class, TenantQueueIsolation::class);
+
+        // Register the multi-strategy resolver
+        $this->app->singleton(TenantResolverService::class);
     }
 }

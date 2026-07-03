@@ -3,6 +3,15 @@
 namespace Modules\Tenant\Providers;
 
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
+use Modules\Tenant\Domain\Events\TenantActivated;
+use Modules\Tenant\Domain\Events\TenantCreated;
+use Modules\Tenant\Domain\Events\TenantSettingsUpdated;
+use Modules\Tenant\Domain\Events\TenantSuspended;
+use Modules\Tenant\Listeners\InitializeTenantStorage;
+use Modules\Tenant\Listeners\InvalidateTenantCaches;
+use Modules\Tenant\Listeners\LogTenantResolved;
+use Modules\Tenant\Listeners\LogTenantStatusChange;
+use Modules\Tenant\Domain\Events\TenantResolved;
 
 class EventServiceProvider extends ServiceProvider
 {
@@ -11,7 +20,23 @@ class EventServiceProvider extends ServiceProvider
      *
      * @var array<string, array<int, string>>
      */
-    protected $listen = [];
+    protected $listen = [
+        TenantResolved::class => [
+            LogTenantResolved::class,
+        ],
+        TenantCreated::class => [
+            InitializeTenantStorage::class,
+        ],
+        TenantActivated::class => [
+            LogTenantStatusChange::class,
+        ],
+        TenantSuspended::class => [
+            LogTenantStatusChange::class,
+        ],
+        TenantSettingsUpdated::class => [
+            InvalidateTenantCaches::class,
+        ],
+    ];
 
     /**
      * Indicates if events should be discovered.

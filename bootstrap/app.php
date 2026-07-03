@@ -4,7 +4,10 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
-use App\Http\Middleware\ResolveTenant;
+use Modules\Tenant\Http\Middleware\ResolveTenant;
+use Modules\Tenant\Http\Middleware\SetTenantContext;
+use Modules\Tenant\Http\Middleware\EnsureTenantActive;
+use Modules\Tenant\Http\Middleware\ApplyTenantScope;
 
 return Application::configure(basePath: dirname(__DIR__))
     ->withRouting(
@@ -16,6 +19,9 @@ return Application::configure(basePath: dirname(__DIR__))
     ->withMiddleware(function (Middleware $middleware): void {
         $middleware->alias([
             'tenant' => ResolveTenant::class,
+            'tenant.context' => SetTenantContext::class,
+            'tenant.active' => EnsureTenantActive::class,
+            'tenant.scope' => ApplyTenantScope::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

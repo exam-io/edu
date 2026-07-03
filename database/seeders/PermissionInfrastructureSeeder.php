@@ -13,6 +13,7 @@ class PermissionInfrastructureSeeder extends Seeder
 
         $this->call([
             RoleSeeder::class,
+            AcademicPermissionSeeder::class,
         ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();

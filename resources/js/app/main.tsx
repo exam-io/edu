@@ -7,6 +7,8 @@ import { PermissionProvider } from '@modules/auth/components/PermissionProvider'
 import { TenantProvider } from '@modules/auth/components/TenantProvider';
 import { ThemeProvider } from '@providers/ThemeProvider';
 import { LocaleProvider } from '@providers/LocaleProvider';
+import { InstituteProvider } from '@modules/institutes';
+import { AcademicProvider } from '@modules/academic';
 
 const rootElement = document.getElementById('app');
 
@@ -21,9 +23,13 @@ createRoot(rootElement).render(
                 <PermissionProvider>
                     <ThemeProvider>
                         <LocaleProvider>
-                            <BrowserRouter>
-                                <App />
-                            </BrowserRouter>
+                            <InstituteProvider>
+                                <AcademicProvider>
+                                    <BrowserRouter>
+                                        <App />
+                                    </BrowserRouter>
+                                </AcademicProvider>
+                            </InstituteProvider>
                         </LocaleProvider>
                     </ThemeProvider>
                 </PermissionProvider>

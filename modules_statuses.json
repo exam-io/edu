@@ -3,5 +3,6 @@
     "Identity": true,
     "Tenant": true,
     "Institute": true,
-    "Settings": true
+    "Settings": true,
+    "Academic": true
 }

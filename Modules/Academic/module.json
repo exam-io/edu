@@ -1,0 +1,11 @@
+{
+    "name": "Academic",
+    "alias": "academic",
+    "description": "Academic structure foundation module",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\Academic\\Providers\\AcademicServiceProvider"
+    ],
+    "files": []
+}
