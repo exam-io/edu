@@ -8,12 +8,16 @@ return new class extends Migration
 {
     public function up(): void
     {
+        if (Schema::hasTable('content_items')) {
+            return;
+        }
+
         Schema::create('content_items', function (Blueprint $table): void {
             $table->id();
             $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
             $table->foreignId('course_id')->constrained('courses')->cascadeOnDelete();
             $table->foreignId('course_section_id')->nullable()->constrained('course_sections')->nullOnDelete();
-            $table->foreignId('media_asset_id')->nullable()->constrained('media_assets')->nullOnDelete();
+            $table->foreignId('media_asset_id')->nullable();
             $table->string('title');
             $table->string('content_type', 32);
             $table->longText('content_body')->nullable();
@@ -27,6 +31,7 @@ return new class extends Migration
 
             $table->index(['tenant_id', 'course_id']);
             $table->index(['tenant_id', 'course_section_id']);
+            $table->index(['tenant_id', 'media_asset_id']);
             $table->index(['tenant_id', 'status']);
             $table->index(['tenant_id', 'content_type']);
         });

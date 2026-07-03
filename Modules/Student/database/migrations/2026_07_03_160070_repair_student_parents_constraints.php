@@ -44,20 +44,8 @@ return new class extends Migration
 
     public function down(): void
     {
-        if (! Schema::hasTable('student_parents')) {
-            return;
-        }
-
-        Schema::table('student_parents', function (Blueprint $table): void {
-            try {
-                $table->dropUnique('student_parents_tenant_student_parent_unique');
-            } catch (Throwable $e) {
-            }
-
-            try {
-                $table->dropForeign(['parent_id']);
-            } catch (Throwable $e) {
-            }
-        });
+        // This is a repair migration for partial-run states.
+        // Rollback is intentionally a no-op because base table rollback handles teardown.
+        return;
     }
 };

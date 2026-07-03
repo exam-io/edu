@@ -5,6 +5,7 @@ namespace Database\Seeders;
 use Illuminate\Database\Seeder;
 use Spatie\Permission\Models\Permission;
 use Spatie\Permission\Models\Role;
+use Spatie\Permission\PermissionRegistrar;
 
 class AcademicPermissionSeeder extends Seeder
 {
@@ -44,14 +45,17 @@ class AcademicPermissionSeeder extends Seeder
 
     public function run(): void
     {
-        foreach (self::PERMISSIONS as $permission) {
-            Permission::findOrCreate($permission, 'web');
-        }
+        $permissions = collect(self::PERMISSIONS)
+            ->map(static fn (string $permission): Permission => Permission::findOrCreate($permission, 'web'));
+
+        app(PermissionRegistrar::class)->forgetCachedPermissions();
 
         $superAdmin = Role::findByName('Super Admin', 'web');
         $instituteAdmin = Role::findByName('Institute Admin', 'web');
 
-        $superAdmin->givePermissionTo(self::PERMISSIONS);
-        $instituteAdmin->givePermissionTo(array_filter(self::PERMISSIONS, static fn (string $permission) => !str_ends_with($permission, '.*')));
+        $superAdmin->syncPermissions($permissions);
+        $instituteAdmin->syncPermissions(
+            $permissions->reject(static fn (Permission $permission): bool => str_ends_with($permission->name, '.*'))->values()
+        );
     }
 }
