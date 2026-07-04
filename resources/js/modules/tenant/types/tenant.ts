@@ -1,8 +1,11 @@
 export interface TenantBranding {
     primary_color: string;
     secondary_color: string;
+    accent_color?: string;
     logo?: string;
     favicon?: string;
+    ui_font?: string;
+    mono_font?: string;
     theme: 'light' | 'dark';
     language: string;
     timezone: string;

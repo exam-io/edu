@@ -67,6 +67,8 @@ import { ExamOverviewPage } from '@modules/exam';
 import { AssignmentSubmissionPage, AssignmentSubmissionsPage } from '@modules/assignment';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
+import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
+import { LiveClassesPage } from '@modules/dashboard/pages/LiveClassesPage';
 
 export function AppRoutes() {
     return (
@@ -117,6 +119,8 @@ export function AppRoutes() {
                             <Route path="/ai" element={<AIGenerationPage />} />
                             <Route path="/content-processing" element={<ContentProcessingPage />} />
                             <Route path="/question-bank" element={<QuestionBankPage />} />
+                            <Route path="/calendar" element={<CalendarPage />} />
+                            <Route path="/live-classes" element={<LiveClassesPage />} />
                             <Route path="/assessments" element={<AssessmentListPage />} />
                             <Route path="/assessments/create" element={<CreateAssessmentPage />} />
                             <Route path="/assessments/builder" element={<AssessmentBuilderPage />} />

@@ -19,6 +19,18 @@ export function useTenantTheme(): Record<string, string> {
         if (branding) {
             variables['--color-primary'] = branding.primary_color;
             variables['--color-secondary'] = branding.secondary_color;
+            variables['--color-accent'] = branding.accent_color ?? base['--color-accent'];
+
+            const uiFont = branding.ui_font;
+            const monoFont = branding.mono_font;
+
+            if (uiFont) {
+                variables['--font-sans'] = `'${uiFont}', 'Inter', ui-sans-serif, system-ui, sans-serif`;
+            }
+
+            if (monoFont) {
+                variables['--font-mono'] = `'${monoFont}', 'JetBrains Mono', ui-monospace, monospace`;
+            }
         }
 
         return variables;
