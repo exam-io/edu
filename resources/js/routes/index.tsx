@@ -69,6 +69,10 @@ import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
 import { LiveClassesPage } from '@modules/dashboard/pages/LiveClassesPage';
+import { TeacherDashboardPage } from '@modules/dashboard/pages/TeacherDashboardPage';
+import { StudentDashboardPage } from '@modules/dashboard/pages/StudentDashboardPage';
+import { ParentDashboardPage } from '@modules/dashboard/pages/ParentDashboardPage';
+import { RoleHomeRedirect } from '@modules/auth/routes/RoleHomeRedirect';
 
 export function AppRoutes() {
     return (
@@ -121,6 +125,9 @@ export function AppRoutes() {
                             <Route path="/question-bank" element={<QuestionBankPage />} />
                             <Route path="/calendar" element={<CalendarPage />} />
                             <Route path="/live-classes" element={<LiveClassesPage />} />
+                            <Route path="/dashboard/teacher" element={<TeacherDashboardPage />} />
+                            <Route path="/dashboard/student" element={<StudentDashboardPage />} />
+                            <Route path="/dashboard/parent" element={<ParentDashboardPage />} />
                             <Route path="/assessments" element={<AssessmentListPage />} />
                             <Route path="/assessments/create" element={<CreateAssessmentPage />} />
                             <Route path="/assessments/builder" element={<AssessmentBuilderPage />} />
@@ -144,7 +151,7 @@ export function AppRoutes() {
 
                             <Route
                                 path="/"
-                                element={<Navigate to="/institutes/onboarding" replace />}
+                                element={<RoleHomeRedirect />}
                             />
                         </Route>
                     </Route>

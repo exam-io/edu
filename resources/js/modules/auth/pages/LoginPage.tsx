@@ -2,6 +2,7 @@ import { FormEvent, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { ArrowRight, BookOpenCheck, GraduationCap, LockKeyhole, Mail } from 'lucide-react';
 import { useAuthStore } from '@modules/auth/store/authStore';
+import { getRoleDefaultPath } from '@modules/auth/utils/roleDashboard';
 
 export function LoginPage() {
     const login = useAuthStore((state) => state.login);
@@ -18,7 +19,8 @@ export function LoginPage() {
 
         try {
             await login({ email, password, remember });
-            navigate('/');
+            const roles = useAuthStore.getState().roles;
+            navigate(getRoleDefaultPath(roles), { replace: true });
         } catch (requestError) {
             setError(requestError instanceof Error ? requestError.message : 'Login failed.');
         }

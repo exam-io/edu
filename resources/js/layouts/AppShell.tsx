@@ -10,6 +10,7 @@ import {
     Home,
     Image,
     Library,
+    Presentation,
     Settings,
     Users,
 } from 'lucide-react';
@@ -48,6 +49,9 @@ const navItems: ShellNavItem[] = [
     { label: 'AI Studio', path: '/ai', group: 'Intelligence', icon: Bot },
     { label: 'Calendar', path: '/calendar', group: 'Productivity', icon: Calendar },
     { label: 'Live Classes', path: '/live-classes', group: 'Productivity', icon: Camera },
+    { label: 'Teacher Dashboard', path: '/dashboard/teacher', group: 'Dashboards', icon: Presentation },
+    { label: 'Student Dashboard', path: '/dashboard/student', group: 'Dashboards', icon: GraduationCap },
+    { label: 'Parent Dashboard', path: '/dashboard/parent', group: 'Dashboards', icon: Users },
     { label: 'Settings', path: '/settings', group: 'System', icon: Settings },
 ];
 
