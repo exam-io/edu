@@ -10,6 +10,8 @@ interface TopBarProps {
     search: string;
     onSearchChange: (value: string) => void;
     onSearchFocus: () => void;
+    showGlobalSearch?: boolean;
+    roleLabel?: string;
     theme: ThemeMode;
     onThemeToggle: () => void;
     language: LocaleCode;
@@ -25,6 +27,8 @@ export function TopBar({
     search,
     onSearchChange,
     onSearchFocus,
+    showGlobalSearch = true,
+    roleLabel,
     theme,
     onThemeToggle,
     language,
@@ -41,7 +45,13 @@ export function TopBar({
                 <button type="button" className="btn-ghost lg:hidden" onClick={onMenuOpen}>
                     <Menu size={16} />
                 </button>
-                <SearchBar value={search} onChange={onSearchChange} onFocus={onSearchFocus} />
+                {showGlobalSearch ? (
+                    <SearchBar value={search} onChange={onSearchChange} onFocus={onSearchFocus} />
+                ) : (
+                    <span className="hidden rounded-full border border-[var(--color-border)] bg-[var(--color-surface)] px-3 py-1 text-xs font-semibold uppercase tracking-[0.1em] text-[var(--color-muted)] md:inline-flex">
+                        {roleLabel ?? 'Workspace'}
+                    </span>
+                )}
             </div>
 
             <div className="flex items-center gap-2">

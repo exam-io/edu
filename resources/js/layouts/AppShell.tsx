@@ -14,7 +14,7 @@ import {
     Settings,
     Users,
 } from 'lucide-react';
-import { type PropsWithChildren, useEffect, useState } from 'react';
+import { type PropsWithChildren, useEffect, useMemo, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { CommandPalette } from '@components/shell/CommandPalette';
 import { Sidebar } from '@components/shell/Sidebar';
@@ -24,11 +24,12 @@ import { Breadcrumbs } from '@components/shell/Breadcrumbs';
 import { PageHeader } from '@components/shell/PageHeader';
 import { QuickActions } from '@components/shell/QuickActions';
 import { useAuthStore } from '@modules/auth/store/authStore';
+import { getRolePanelType } from '@modules/auth/utils/roleDashboard';
 import { useTenantStore } from '@modules/tenant/store/tenantStore';
 import { useLocaleStore } from '@stores/localeStore';
 import { useThemeStore } from '@stores/themeStore';
 
-const navItems: ShellNavItem[] = [
+const allNavItems: ShellNavItem[] = [
     { label: 'Institute Onboarding', path: '/institutes/onboarding', group: 'Institute', icon: Building2 },
     { label: 'Academic Dashboard', path: '/academic', group: 'Institute', icon: Home },
     { label: 'Departments', path: '/academic/departments', group: 'Academic', icon: Library },
@@ -55,7 +56,133 @@ const navItems: ShellNavItem[] = [
     { label: 'Settings', path: '/settings', group: 'System', icon: Settings },
 ];
 
-const favoritePaths = ['/academic', '/students', '/assessments', '/ai'];
+const roleNavigationPaths: Record<string, string[]> = {
+    admin: [
+        '/institutes/onboarding',
+        '/academic',
+        '/academic/departments',
+        '/academic/programs',
+        '/academic/classes',
+        '/academic/sections',
+        '/academic/batches',
+        '/academic/subjects',
+        '/students',
+        '/teachers',
+        '/parents',
+        '/enrollments',
+        '/courses',
+        '/content',
+        '/media',
+        '/ai',
+        '/calendar',
+        '/live-classes',
+        '/assessments',
+        '/assessments/create',
+        '/assessments/evaluate',
+        '/assessments/dashboard',
+        '/exams/overview',
+        '/assignments/submissions',
+        '/settings',
+    ],
+    teacher: [
+        '/dashboard/teacher',
+        '/live-classes',
+        '/calendar',
+        '/assessments/mine',
+        '/assessments/evaluate',
+        '/assessments/teacher-results',
+        '/assignments/submissions',
+        '/content',
+        '/question-bank',
+        '/settings',
+    ],
+    student: [
+        '/dashboard/student',
+        '/courses',
+        '/content',
+        '/calendar',
+        '/live-classes',
+        '/assessments/mine',
+        '/assessments/attempt',
+        '/assignments/submit',
+        '/settings',
+    ],
+    parent: [
+        '/dashboard/parent',
+        '/calendar',
+        '/live-classes',
+        '/assignments/submissions',
+        '/settings',
+    ],
+    general: ['/academic', '/calendar', '/settings'],
+};
+
+const roleFavoritePaths: Record<string, string[]> = {
+    admin: ['/academic', '/students', '/assessments', '/ai'],
+    teacher: ['/dashboard/teacher', '/live-classes', '/assessments/mine'],
+    student: ['/dashboard/student', '/courses', '/assessments/mine'],
+    parent: ['/dashboard/parent', '/calendar'],
+    general: ['/academic'],
+};
+
+const roleShellCopy: Record<
+    string,
+    {
+        title: string;
+        description: string;
+        quickActions: Array<{ label: string; path: string }>;
+        roleLabel: string;
+        showGlobalSearch: boolean;
+    }
+> = {
+    admin: {
+        title: 'Institute Command Center',
+        description: 'Manage academics, people, analytics, and AI operations across your tenant with full administrative control.',
+        quickActions: [
+            { label: 'Add Student', path: '/students/create' },
+            { label: 'Create Assessment', path: '/assessments/create' },
+        ],
+        roleLabel: 'Admin Console',
+        showGlobalSearch: true,
+    },
+    teacher: {
+        title: 'Teacher Workspace',
+        description: 'Run classes, evaluate submissions, publish assessments, and keep learner performance on track.',
+        quickActions: [
+            { label: 'Evaluate Submissions', path: '/assessments/evaluate' },
+            { label: 'Teacher Results', path: '/assessments/teacher-results' },
+        ],
+        roleLabel: 'Teacher Panel',
+        showGlobalSearch: true,
+    },
+    student: {
+        title: 'Student Learning Hub',
+        description: 'See your classes, assignments, and upcoming assessments in a focused learner experience.',
+        quickActions: [
+            { label: 'Start Attempt', path: '/assessments/attempt' },
+            { label: 'Submit Assignment', path: '/assignments/submit' },
+        ],
+        roleLabel: 'Student Panel',
+        showGlobalSearch: false,
+    },
+    parent: {
+        title: 'Parent Engagement Portal',
+        description: 'Track attendance, assignment updates, and institute announcements for your child in one clear view.',
+        quickActions: [
+            { label: 'View Calendar', path: '/calendar' },
+            { label: 'Open Live Classes', path: '/live-classes' },
+        ],
+        roleLabel: 'Parent Panel',
+        showGlobalSearch: false,
+    },
+    general: {
+        title: 'EduOS Workspace',
+        description: 'Run your institute from one modern workspace with AI workflows, live classes, and actionable academic insights.',
+        quickActions: [{ label: 'Open Academic', path: '/academic' }],
+        roleLabel: 'Workspace',
+        showGlobalSearch: true,
+    },
+};
 
 const demoNotifications: ShellNotification[] = [
     {
@@ -119,16 +246,21 @@ export function AppShell({ children }: PropsWithChildren) {
     const language = useLocaleStore((state) => state.language);
     const setLanguage = useLocaleStore((state) => state.setLanguage);
 
+    const panelType = useMemo(() => getRolePanelType(roles), [roles]);
+    const allowedPaths = roleNavigationPaths[panelType];
+    const scopedNavItems = useMemo(() => allNavItems.filter((item) => allowedPaths.includes(item.path)), [allowedPaths]);
+    const shellCopy = roleShellCopy[panelType];
+
     useEffect(() => {
         writeRecentPath(location.pathname);
     }, [location.pathname]);
 
     const roleText = roles.length > 0 ? roles.join(', ') : 'Institute user';
-    const shellTitle = tenant?.name ?? 'EduOS Workspace';
+    const shellTitle = tenant?.name ? `${tenant.name} • ${shellCopy.roleLabel}` : shellCopy.roleLabel;
 
-    const favorites = navItems.filter((item) => favoritePaths.includes(item.path));
+    const favorites = scopedNavItems.filter((item) => roleFavoritePaths[panelType].includes(item.path));
     const recent = readRecentPaths()
-        .map((path) => navItems.find((item) => item.path === path))
+        .map((path) => scopedNavItems.find((item) => item.path === path))
         .filter((item): item is ShellNavItem => Boolean(item));
 
     return (
@@ -137,7 +269,7 @@ export function AppShell({ children }: PropsWithChildren) {
                 <Sidebar
                     open={sidebarOpen}
                     collapsed={sidebarCollapsed}
-                    navItems={navItems}
+                    navItems={scopedNavItems}
                     favorites={favorites}
                     recent={recent}
                     logo={branding?.logo}
@@ -152,6 +284,8 @@ export function AppShell({ children }: PropsWithChildren) {
                         search={search}
                         onSearchChange={setSearch}
                         onSearchFocus={() => setPaletteOpen(true)}
+                        showGlobalSearch={shellCopy.showGlobalSearch}
+                        roleLabel={shellCopy.roleLabel}
                         theme={theme}
                         onThemeToggle={() => setTheme(theme === 'dark' ? 'light' : 'dark')}
                         language={language}
@@ -169,14 +303,11 @@ export function AppShell({ children }: PropsWithChildren) {
                         <div className="space-y-4 animate-in">
                             <Breadcrumbs />
                             <PageHeader
-                                title={shellTitle}
-                                description="Run your institute from one modern workspace with AI workflows, live classes, and actionable academic insights."
+                                title={shellCopy.title}
+                                description={shellCopy.description}
                                 actions={
                                     <QuickActions
-                                        actions={[
-                                            { label: 'Add Student', path: '/students/create' },
-                                            { label: 'Create Assessment', path: '/assessments/create' },
-                                        ]}
+                                        actions={shellCopy.quickActions}
                                     />
                                 }
                             />
@@ -189,7 +320,7 @@ export function AppShell({ children }: PropsWithChildren) {
             <CommandPalette
                 open={paletteOpen}
                 setOpen={setPaletteOpen}
-                navItems={navItems}
+                navItems={scopedNavItems}
                 onNavigate={(path) => navigate(path)}
             />
         </div>
