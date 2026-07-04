@@ -58,6 +58,34 @@ class QuestionBankApiTest extends TestCase
             ->assertJsonPath('meta.per_page', 5);
     }
 
+    public function test_question_set_creation_rejects_invalid_question_payloads(): void
+    {
+        $tenant = $this->createTenant('qb-validation');
+        $user = $this->createUser($tenant, 'qb-validation@a.test');
+
+        Permission::findOrCreate('question.bank.create', 'web');
+        $user->givePermissionTo(['question.bank.create']);
+
+        Sanctum::actingAs($user);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/question-sets', [
+                'title' => 'Invalid Set',
+                'question_type' => 'mcq',
+                'difficulty' => 'easy',
+                'questions' => [
+                    [
+                        'stem' => 'Too short',
+                        'question_type' => 'mcq',
+                        'correct_answer' => [],
+                    ],
+                ],
+            ])
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['questions']);
+    }
+
     private function createTenant(string $slug): Tenant
     {
         return Tenant::query()->create([

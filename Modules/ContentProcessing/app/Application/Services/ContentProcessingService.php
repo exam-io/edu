@@ -7,6 +7,7 @@ use Illuminate\Database\Eloquent\ModelNotFoundException;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Validation\ValidationException;
 use Modules\ContentProcessing\Application\Contracts\ContentProcessingServiceInterface;
 use Modules\ContentProcessing\Application\Contracts\ContentSourceRepositoryInterface;
 use Modules\ContentProcessing\Application\Contracts\ExtractionPipelineInterface;
@@ -75,8 +76,19 @@ class ContentProcessingService implements ContentProcessingServiceInterface
             ];
         } else {
             $sourceType = 'url';
+            $url = trim((string) ($attributes['source_url'] ?? ''));
+
+            if ($url === '' || ! filter_var($url, FILTER_VALIDATE_URL)) {
+                throw ValidationException::withMessages([
+                    'source_url' => ['A valid source_url is required for URL sources.'],
+                ]);
+            }
+
             $mimeType = 'text/html';
-            $sourceRef = (string) ($attributes['source_url'] ?? '');
+            $sourceRef = $url;
+            $meta = [
+                'source_url' => $url,
+            ];
         }
 
         $source = $this->repository->createSource([

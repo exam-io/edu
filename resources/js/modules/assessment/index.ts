@@ -1,0 +1,12 @@
+export { AssessmentProvider } from '@modules/assessment/providers/AssessmentProvider';
+export { AssessmentListPage } from '@modules/assessment/pages/AssessmentListPage';
+export { CreateAssessmentPage } from '@modules/assessment/pages/CreateAssessmentPage';
+export { AssessmentBuilderPage } from '@modules/assessment/pages/AssessmentBuilderPage';
+export { PublishAssessmentPage } from '@modules/assessment/pages/PublishAssessmentPage';
+export { ResultDashboardPage } from '@modules/assessment/pages/ResultDashboardPage';
+export { MyAssessmentsPage } from '@modules/assessment/pages/MyAssessmentsPage';
+export { EvaluateSubmissionsPage } from '@modules/assessment/pages/EvaluateSubmissionsPage';
+export { TeacherResultsPage } from '@modules/assessment/pages/TeacherResultsPage';
+export { AssessmentInstructionsPage } from '@modules/assessment/pages/AssessmentInstructionsPage';
+export { AttemptScreenPage } from '@modules/assessment/pages/AttemptScreenPage';
+export { ResultScreenPage } from '@modules/assessment/pages/ResultScreenPage';

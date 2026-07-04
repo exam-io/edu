@@ -1,10 +1,11 @@
 openapi: 3.1.0
 info:
   title: EduOS API
-  version: 1.1.0
-  description: Step 8 API foundation for EduOS modular monolith.
+  version: 1.2.0
+  description: Step 10 API coverage for EduOS modular monolith.
 servers:
   - url: /api/v1
+  - url: /api
 paths:
   /health:
     get:
@@ -143,8 +144,244 @@ paths:
             application/json:
               schema:
                 $ref: '#/components/schemas/QuestionSetSingleResponse'
+  /assessments:
+    get:
+      operationId: listAssessments
+      summary: List tenant assessments
+      tags: [Assessment]
+      responses:
+        '200':
+          description: Assessment list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentListResponse'
+    post:
+      operationId: createAssessment
+      summary: Create assessment
+      tags: [Assessment]
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentCreateRequest'
+      responses:
+        '201':
+          description: Assessment created
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentSingleResponse'
+  /assessments/{id}:
+    get:
+      operationId: showAssessment
+      summary: Show assessment details
+      tags: [Assessment]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Assessment details
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentSingleResponse'
+    put:
+      operationId: updateAssessment
+      summary: Update assessment
+      tags: [Assessment]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentCreateRequest'
+      responses:
+        '200':
+          description: Assessment updated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentSingleResponse'
+    delete:
+      operationId: deleteAssessment
+      summary: Delete assessment
+      tags: [Assessment]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Assessment deleted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ApiMessageResponse'
+  /assessments/{id}/publish:
+    post:
+      operationId: publishAssessment
+      summary: Publish assessment
+      tags: [Assessment]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Assessment published
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentSingleResponse'
+  /assessments/{id}/start:
+    post:
+      operationId: startAssessmentAttempt
+      summary: Start or resume student assessment attempt
+      tags: [AssessmentAttempt]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Attempt started
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentAttemptSingleResponse'
+  /assessments/{id}/save-answer:
+    post:
+      operationId: saveAssessmentAnswer
+      summary: Save answer and move to next
+      tags: [AssessmentAttempt]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentSaveAnswerRequest'
+      responses:
+        '200':
+          description: Answer saved
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentAttemptSingleResponse'
+  /assessments/{id}/submit:
+    post:
+      operationId: submitAssessmentAttempt
+      summary: Submit assessment attempt
+      tags: [AssessmentAttempt]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Attempt submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentAttemptSingleResponse'
+  /assessments/{id}/attempts/{attemptId}/evaluate:
+    post:
+      operationId: manualEvaluateAttempt
+      summary: Teacher manual evaluation for subjective answers
+      tags: [AssessmentAttempt]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+        - $ref: '#/components/parameters/AttemptId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssessmentManualEvaluateRequest'
+      responses:
+        '200':
+          description: Attempt evaluated
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentAttemptSingleResponse'
+  /assessments/{id}/result:
+    get:
+      operationId: getAssessmentResult
+      summary: Get student result for an assessment
+      tags: [AssessmentResult]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      responses:
+        '200':
+          description: Assessment result
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssessmentResultSingleResponse'
+  /assignments/{id}/submit:
+    post:
+      operationId: submitAssignment
+      summary: Submit assignment file
+      tags: [Assignment]
+      parameters:
+        - $ref: '#/components/parameters/AssessmentId'
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/AssignmentSubmitRequest'
+      responses:
+        '201':
+          description: Assignment submitted
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentSubmissionSingleResponse'
+  /assignments/submissions:
+    get:
+      operationId: listAssignmentSubmissions
+      summary: List assignment submissions with filter and search
+      tags: [Assignment]
+      responses:
+        '200':
+          description: Assignment submission list
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/AssignmentSubmissionListResponse'
+  /exams/overview:
+    get:
+      operationId: examOverview
+      summary: Exam and assessment overview analytics
+      tags: [Exam]
+      responses:
+        '200':
+          description: Exam overview
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/ExamOverviewResponse'
 components:
+  parameters:
+    AssessmentId:
+      name: id
+      in: path
+      required: true
+      schema:
+        type: integer
+    AttemptId:
+      name: attemptId
+      in: path
+      required: true
+      schema:
+        type: integer
   schemas:
+    ApiMessageResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        message:
+          type: string
     PaginationMeta:
       type: object
       properties:
@@ -301,3 +538,282 @@ components:
           type: boolean
         data:
           $ref: '#/components/schemas/QuestionSet'
+    AssessmentQuestion:
+      type: object
+      properties:
+        question_id:
+          type: integer
+        marks:
+          type: number
+          format: float
+        sort_order:
+          type: integer
+    Assessment:
+      type: object
+      properties:
+        id:
+          type: integer
+        tenant_id:
+          type: integer
+        title:
+          type: string
+        description:
+          type: string
+          nullable: true
+        type:
+          type: string
+        instructions:
+          type: string
+          nullable: true
+        start_at:
+          type: string
+          format: date-time
+          nullable: true
+        end_at:
+          type: string
+          format: date-time
+          nullable: true
+        duration_minutes:
+          type: integer
+          nullable: true
+        total_marks:
+          type: number
+          format: float
+        passing_marks:
+          type: number
+          format: float
+        negative_marking:
+          type: number
+          format: float
+        randomize_questions:
+          type: boolean
+        randomize_options:
+          type: boolean
+        status:
+          type: string
+        published_at:
+          type: string
+          format: date-time
+          nullable: true
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssessmentQuestion'
+    AssessmentCreateRequest:
+      type: object
+      required: [title, type]
+      properties:
+        title:
+          type: string
+        description:
+          type: string
+        type:
+          type: string
+          enum: [Assignment, Quiz, Practice Test, Mock Test, Unit Test, Mid-Term, Final Exam, Entrance Exam, Homework]
+        instructions:
+          type: string
+        start_at:
+          type: string
+          format: date-time
+        end_at:
+          type: string
+          format: date-time
+        duration_minutes:
+          type: integer
+        total_marks:
+          type: number
+          format: float
+        passing_marks:
+          type: number
+          format: float
+        negative_marking:
+          type: number
+          format: float
+        randomize_questions:
+          type: boolean
+        randomize_options:
+          type: boolean
+        status:
+          type: string
+        questions:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssessmentQuestion'
+    AssessmentSaveAnswerRequest:
+      type: object
+      required: [question_id]
+      properties:
+        question_id:
+          type: integer
+        selected_answer:
+          type: array
+          items:
+            oneOf:
+              - type: string
+              - type: number
+              - type: boolean
+        mark_for_review:
+          type: boolean
+    AssessmentManualEvaluateRequest:
+      type: object
+      required: [answers]
+      properties:
+        answers:
+          type: array
+          items:
+            type: object
+            required: [question_id, marks_awarded]
+            properties:
+              question_id:
+                type: integer
+              marks_awarded:
+                type: number
+                format: float
+              is_correct:
+                type: boolean
+                nullable: true
+    AssessmentAttempt:
+      type: object
+      properties:
+        id:
+          type: integer
+        assessment_id:
+          type: integer
+        student_id:
+          type: integer
+        score:
+          type: number
+          format: float
+        percentage:
+          type: number
+          format: float
+        rank:
+          type: integer
+          nullable: true
+        status:
+          type: string
+    AssessmentResult:
+      type: object
+      properties:
+        attempt_id:
+          type: integer
+        assessment_id:
+          type: integer
+        assessment_title:
+          type: string
+        score:
+          type: number
+          format: float
+        percentage:
+          type: number
+          format: float
+        rank:
+          type: integer
+          nullable: true
+        total_marks:
+          type: number
+          format: float
+        passing_marks:
+          type: number
+          format: float
+    AssessmentListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/Assessment'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    AssessmentSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/Assessment'
+    AssessmentAttemptSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AssessmentAttempt'
+    AssessmentResultSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AssessmentResult'
+    AssignmentSubmitRequest:
+      type: object
+      required: [file_path]
+      properties:
+        file_path:
+          type: string
+    AssignmentSubmission:
+      type: object
+      properties:
+        id:
+          type: integer
+        assessment_id:
+          type: integer
+        student_id:
+          type: integer
+        file_path:
+          type: string
+        submitted_at:
+          type: string
+          format: date-time
+          nullable: true
+        score:
+          type: number
+          format: float
+          nullable: true
+        feedback:
+          type: string
+          nullable: true
+        status:
+          type: string
+    AssignmentSubmissionSingleResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          $ref: '#/components/schemas/AssignmentSubmission'
+    AssignmentSubmissionListResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: array
+          items:
+            $ref: '#/components/schemas/AssignmentSubmission'
+        meta:
+          $ref: '#/components/schemas/PaginationMeta'
+    ExamOverviewResponse:
+      type: object
+      properties:
+        success:
+          type: boolean
+        data:
+          type: object
+          properties:
+            total_assessments:
+              type: integer
+            published_assessments:
+              type: integer
+            exam_type_breakdown:
+              type: array
+              items:
+                type: object
+                properties:
+                  type:
+                    type: string
+                  total:
+                    type: integer

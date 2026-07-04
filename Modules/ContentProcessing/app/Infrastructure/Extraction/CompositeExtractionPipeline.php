@@ -11,6 +11,7 @@ class CompositeExtractionPipeline implements ExtractionPipelineInterface
     public function __construct(
         private readonly PlainTextExtractor $plainTextExtractor,
         private readonly PdfTextExtractor $pdfTextExtractor,
+        private readonly UrlExtractor $urlExtractor,
     ) {}
 
     public function extract(ContentSource $source): ExtractionResultData
@@ -27,6 +28,10 @@ class CompositeExtractionPipeline implements ExtractionPipelineInterface
 
         if ($source->mime_type === 'application/pdf') {
             return $this->pdfTextExtractor->extract($source);
+        }
+
+        if ($source->source_type === 'url' || $source->mime_type === 'text/html') {
+            return $this->urlExtractor->extract($source);
         }
 
         return new ExtractionResultData(false, null, 'Unsupported source format for extraction.', [

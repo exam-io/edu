@@ -33,4 +33,39 @@ export const questionBankService = {
             throw new Error(readErrorMessage(error));
         }
     },
+
+    async createSet(payload: Record<string, unknown>): Promise<QuestionSet> {
+        try {
+            const response = await questionBankHttp.post<QuestionBankEnvelope<QuestionSet>>('/question-sets', payload);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async showSet(id: number): Promise<QuestionSet> {
+        try {
+            const response = await questionBankHttp.get<QuestionBankEnvelope<QuestionSet>>(`/question-sets/${id}`);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async updateSet(id: number, payload: Record<string, unknown>): Promise<QuestionSet> {
+        try {
+            const response = await questionBankHttp.put<QuestionBankEnvelope<QuestionSet>>(`/question-sets/${id}`, payload);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async deleteSet(id: number): Promise<void> {
+        try {
+            await questionBankHttp.delete<QuestionBankEnvelope<unknown>>(`/question-sets/${id}`);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
 };

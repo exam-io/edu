@@ -2,15 +2,18 @@
 
 namespace Modules\QuestionBank\Listeners;
 
+use Illuminate\Support\Facades\Log;
 use Modules\AI\Domain\Events\AIGenerationCompleted;
 use Modules\AI\Domain\Models\AIGenerationOutput;
 use Modules\AI\Domain\Models\AIGenerationRequest;
 use Modules\QuestionBank\Application\Contracts\QuestionRepositoryInterface;
+use Modules\QuestionBank\Domain\Services\QuestionValidator;
 
 class PersistGeneratedQuestions
 {
     public function __construct(
         private readonly QuestionRepositoryInterface $repository,
+        private readonly QuestionValidator $questionValidator,
     ) {}
 
     public function handle(AIGenerationCompleted $event): void
@@ -35,6 +38,17 @@ class PersistGeneratedQuestions
 
         $questions = data_get($output->structured_payload, 'questions', []);
         if (! is_array($questions) || $questions === []) {
+            return;
+        }
+
+        $questions = $this->questionValidator->sanitize($questions, $event->tenantId);
+        if ($questions === []) {
+            Log::warning('AI-generated questions were skipped due to validation rules.', [
+                'request_id' => $event->requestId,
+                'output_id' => $event->outputId,
+                'tenant_id' => $event->tenantId,
+            ]);
+
             return;
         }
 

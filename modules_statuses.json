@@ -15,5 +15,8 @@
     "Content": true,
     "AI": true,
     "QuestionBank": true,
-    "ContentProcessing": true
+    "ContentProcessing": true,
+    "Assessment": true,
+    "Exam": true,
+    "Assignment": true
 }

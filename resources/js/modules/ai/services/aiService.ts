@@ -33,4 +33,30 @@ export const aiService = {
             throw new Error(readErrorMessage(error));
         }
     },
+
+    async create(payload: Record<string, unknown>): Promise<AIGenerationRequest> {
+        try {
+            const response = await aiHttp.post<AIEnvelope<AIGenerationRequest>>('/ai-generation-requests', payload);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async show(id: number): Promise<AIGenerationRequest> {
+        try {
+            const response = await aiHttp.get<AIEnvelope<AIGenerationRequest>>(`/ai-generation-requests/${id}`);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async delete(id: number): Promise<void> {
+        try {
+            await aiHttp.delete<AIEnvelope<unknown>>(`/ai-generation-requests/${id}`);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
 };

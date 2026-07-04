@@ -16,6 +16,12 @@ const navItems: NavItem[] = [
     { label: 'Sections', path: '/academic/sections' },
     { label: 'Batches', path: '/academic/batches' },
     { label: 'Subjects', path: '/academic/subjects' },
+    { label: 'Assessments', path: '/assessments' },
+    { label: 'Assessment Builder', path: '/assessments/builder' },
+    { label: 'Result Dashboard', path: '/assessments/dashboard' },
+    { label: 'Exam Overview', path: '/exams/overview' },
+    { label: 'Assignment Submit', path: '/assignments/submit' },
+    { label: 'Assignment Submissions', path: '/assignments/submissions' },
     { label: 'Settings', path: '/settings' },
 ];
 

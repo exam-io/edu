@@ -11,6 +11,7 @@ use Modules\QuestionBank\Application\DTOs\QuestionSetListQueryData;
 use Modules\QuestionBank\Application\DTOs\QuestionSetMutationData;
 use Modules\QuestionBank\Domain\Events\QuestionSetGenerated;
 use Modules\QuestionBank\Domain\Models\QuestionSet;
+use Modules\QuestionBank\Domain\Services\QuestionValidator;
 use Modules\Tenant\Application\Services\TenantContextService;
 
 class QuestionBankService implements QuestionBankServiceInterface
@@ -18,6 +19,7 @@ class QuestionBankService implements QuestionBankServiceInterface
     public function __construct(
         private readonly QuestionRepositoryInterface $repository,
         private readonly TenantContextService $tenantContext,
+        private readonly QuestionValidator $questionValidator,
     ) {}
 
     public function list(QuestionSetListQueryData $query): LengthAwarePaginator
@@ -39,6 +41,10 @@ class QuestionBankService implements QuestionBankServiceInterface
     {
         $attributes = $data->attributes;
         $questions = $attributes['questions'] ?? [];
+
+        if (is_array($questions) && $questions !== []) {
+            $questions = $this->questionValidator->validateOrFail($questions, $this->tenantId());
+        }
 
         $set = $this->repository->createSet([
             'tenant_id' => $this->tenantId(),

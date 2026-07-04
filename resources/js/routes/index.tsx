@@ -50,6 +50,21 @@ import { LmsOverviewPage } from '@modules/lms';
 import { AIGenerationPage } from '@modules/ai';
 import { ContentProcessingPage } from '@modules/content-processing';
 import { QuestionBankPage } from '@modules/question-bank';
+import {
+    AssessmentBuilderPage,
+    AssessmentInstructionsPage,
+    AssessmentListPage,
+    AttemptScreenPage,
+    CreateAssessmentPage,
+    EvaluateSubmissionsPage,
+    MyAssessmentsPage,
+    PublishAssessmentPage,
+    ResultDashboardPage,
+    ResultScreenPage,
+    TeacherResultsPage,
+} from '@modules/assessment';
+import { ExamOverviewPage } from '@modules/exam';
+import { AssignmentSubmissionPage, AssignmentSubmissionsPage } from '@modules/assignment';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 
@@ -102,6 +117,20 @@ export function AppRoutes() {
                             <Route path="/ai" element={<AIGenerationPage />} />
                             <Route path="/content-processing" element={<ContentProcessingPage />} />
                             <Route path="/question-bank" element={<QuestionBankPage />} />
+                            <Route path="/assessments" element={<AssessmentListPage />} />
+                            <Route path="/assessments/create" element={<CreateAssessmentPage />} />
+                            <Route path="/assessments/builder" element={<AssessmentBuilderPage />} />
+                            <Route path="/assessments/publish" element={<PublishAssessmentPage />} />
+                            <Route path="/assessments/dashboard" element={<ResultDashboardPage />} />
+                            <Route path="/assessments/mine" element={<MyAssessmentsPage />} />
+                            <Route path="/assessments/evaluate" element={<EvaluateSubmissionsPage />} />
+                            <Route path="/assessments/teacher-results" element={<TeacherResultsPage />} />
+                            <Route path="/assessments/instructions" element={<AssessmentInstructionsPage />} />
+                            <Route path="/assessments/attempt" element={<AttemptScreenPage />} />
+                            <Route path="/assessments/result" element={<ResultScreenPage />} />
+                            <Route path="/exams/overview" element={<ExamOverviewPage />} />
+                            <Route path="/assignments/submit" element={<AssignmentSubmissionPage />} />
+                            <Route path="/assignments/submissions" element={<AssignmentSubmissionsPage />} />
 
                             <Route path="/teacher-assignments" element={<TeacherAssignmentsListPage />} />
                             <Route path="/teacher-assignments/create" element={<TeacherAssignmentCreatePage />} />

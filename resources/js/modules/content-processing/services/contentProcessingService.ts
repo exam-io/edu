@@ -33,4 +33,39 @@ export const contentProcessingService = {
             throw new Error(readErrorMessage(error));
         }
     },
+
+    async createSource(payload: FormData | Record<string, unknown>): Promise<ContentSource> {
+        try {
+            const response = await processingHttp.post<ContentProcessingEnvelope<ContentSource>>('/content-sources', payload);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async showSource(id: number): Promise<ContentSource> {
+        try {
+            const response = await processingHttp.get<ContentProcessingEnvelope<ContentSource>>(`/content-sources/${id}`);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async retrySource(id: number): Promise<ContentSource> {
+        try {
+            const response = await processingHttp.post<ContentProcessingEnvelope<ContentSource>>(`/content-sources/${id}/retry`);
+            return readData(response.data);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
+
+    async deleteSource(id: number): Promise<void> {
+        try {
+            await processingHttp.delete<ContentProcessingEnvelope<unknown>>(`/content-sources/${id}`);
+        } catch (error) {
+            throw new Error(readErrorMessage(error));
+        }
+    },
 };
