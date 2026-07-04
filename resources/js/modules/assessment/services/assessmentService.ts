@@ -61,11 +61,12 @@ export const assessmentService = {
         }
     },
 
-    async saveAnswer(id: number, questionId: number, selectedAnswer: unknown[]): Promise<AssessmentAttempt> {
+    async saveAnswer(id: number, questionId: number, selectedAnswer: unknown[], markForReview = false): Promise<AssessmentAttempt> {
         try {
             const response = await http.post<ApiEnvelope<AssessmentAttempt>>(`/assessments/${id}/save-answer`, {
                 question_id: questionId,
                 selected_answer: selectedAnswer,
+                mark_for_review: markForReview,
             });
             return unwrap(response.data);
         } catch (error) {

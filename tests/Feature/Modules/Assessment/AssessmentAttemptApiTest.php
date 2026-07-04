@@ -52,6 +52,68 @@ class AssessmentAttemptApiTest extends TestCase
         $this->assertSame($first->json('data.id'), $second->json('data.id'));
     }
 
+    public function test_start_attempt_returns_assessment_questions_payload(): void
+    {
+        $tenant = $this->createTenant('attempt-payload');
+        [$user, $student] = $this->createStudentUser($tenant, 'student-payload@test.local');
+
+        Permission::findOrCreate('assessment_attempt.create', 'web');
+        $user->givePermissionTo(['assessment_attempt.create']);
+
+        $set = QuestionSet::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Payload Set',
+            'question_type' => 'mcq',
+            'difficulty' => 'medium',
+            'total_questions' => 1,
+            'status' => 'published',
+        ]);
+
+        $question = Question::query()->create([
+            'tenant_id' => $tenant->id,
+            'question_set_id' => $set->id,
+            'stem' => 'Payload question?',
+            'question_type' => 'mcq',
+            'options' => ['A', 'B', 'C'],
+            'correct_answer' => ['A'],
+            'difficulty' => 'medium',
+            'sort_order' => 1,
+            'status' => 'active',
+        ]);
+
+        $assessment = Assessment::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Payload Quiz',
+            'type' => 'Quiz',
+            'total_marks' => 10,
+            'passing_marks' => 4,
+            'randomize_questions' => true,
+            'randomize_options' => true,
+            'status' => 'published',
+            'start_at' => now()->subMinutes(5),
+            'end_at' => now()->addHour(),
+            'created_by' => $user->id,
+        ]);
+
+        $assessment->questions()->create([
+            'tenant_id' => $tenant->id,
+            'question_id' => $question->id,
+            'marks' => 10,
+            'sort_order' => 1,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/start')
+            ->assertOk()
+            ->assertJsonPath('data.assessment.id', $assessment->id)
+            ->assertJsonPath('data.assessment.randomize_questions', true)
+            ->assertJsonPath('data.assessment.randomize_options', true)
+            ->assertJsonPath('data.assessment.questions.0.question_id', $question->id);
+    }
+
     public function test_teacher_can_manually_evaluate_attempt(): void
     {
         $tenant = $this->createTenant('attempt-eval');
@@ -146,6 +208,150 @@ class AssessmentAttemptApiTest extends TestCase
             ->assertOk()
                 ->assertJsonPath('data.score', 7)
             ->assertJsonPath('data.status', 'evaluated');
+    }
+
+    public function test_student_cannot_restart_after_submitting_assessment(): void
+    {
+        $tenant = $this->createTenant('attempt-no-retry');
+        [$user, $student] = $this->createStudentUser($tenant, 'student-no-retry@test.local');
+
+        Permission::findOrCreate('assessment_attempt.create', 'web');
+        Permission::findOrCreate('assessment_attempt.submit', 'web');
+        $user->givePermissionTo(['assessment_attempt.create', 'assessment_attempt.submit']);
+
+        $assessment = Assessment::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Single Attempt Quiz',
+            'type' => 'Quiz',
+            'total_marks' => 10,
+            'passing_marks' => 4,
+            'status' => 'published',
+            'start_at' => now()->subMinutes(10),
+            'end_at' => now()->addMinutes(30),
+            'created_by' => $user->id,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/start')
+            ->assertOk();
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/submit')
+            ->assertOk();
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/start')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['attempt']);
+    }
+
+    public function test_student_cannot_submit_after_end_time(): void
+    {
+        $tenant = $this->createTenant('attempt-deadline');
+        [$user, $student] = $this->createStudentUser($tenant, 'student-deadline@test.local');
+
+        Permission::findOrCreate('assessment_attempt.create', 'web');
+        Permission::findOrCreate('assessment_attempt.submit', 'web');
+        $user->givePermissionTo(['assessment_attempt.create', 'assessment_attempt.submit']);
+
+        $assessment = Assessment::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Deadline Quiz',
+            'type' => 'Quiz',
+            'total_marks' => 10,
+            'passing_marks' => 4,
+            'status' => 'published',
+            'start_at' => now()->subHour(),
+            'end_at' => now()->addMinutes(10),
+            'created_by' => $user->id,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/start')
+            ->assertOk();
+
+        $assessment->update(['end_at' => now()->subMinute()]);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/submit')
+            ->assertUnprocessable()
+            ->assertJsonValidationErrors(['assessment']);
+    }
+
+    public function test_save_answer_persists_mark_for_review_flag(): void
+    {
+        $tenant = $this->createTenant('attempt-mark-review');
+        [$user, $student] = $this->createStudentUser($tenant, 'student-mark-review@test.local');
+
+        Permission::findOrCreate('assessment_attempt.create', 'web');
+        Permission::findOrCreate('assessment_attempt.update', 'web');
+        $user->givePermissionTo(['assessment_attempt.create', 'assessment_attempt.update']);
+
+        $set = QuestionSet::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Review Set',
+            'question_type' => 'mcq',
+            'difficulty' => 'medium',
+            'total_questions' => 1,
+            'status' => 'published',
+        ]);
+
+        $question = Question::query()->create([
+            'tenant_id' => $tenant->id,
+            'question_set_id' => $set->id,
+            'stem' => 'Mark for review question?',
+            'question_type' => 'mcq',
+            'options' => ['Yes', 'No'],
+            'correct_answer' => ['Yes'],
+            'difficulty' => 'medium',
+            'sort_order' => 1,
+            'status' => 'active',
+        ]);
+
+        $assessment = Assessment::query()->create([
+            'tenant_id' => $tenant->id,
+            'title' => 'Review Quiz',
+            'type' => 'Quiz',
+            'total_marks' => 10,
+            'passing_marks' => 4,
+            'status' => 'published',
+            'start_at' => now()->subMinutes(5),
+            'end_at' => now()->addHour(),
+            'created_by' => $user->id,
+        ]);
+
+        $assessment->questions()->create([
+            'tenant_id' => $tenant->id,
+            'question_id' => $question->id,
+            'marks' => 10,
+            'sort_order' => 1,
+        ]);
+
+        Sanctum::actingAs($user);
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/start')
+            ->assertOk();
+
+        $this
+            ->withHeader('X-Tenant-ID', (string) $tenant->id)
+            ->postJson('/api/assessments/' . $assessment->id . '/save-answer', [
+                'question_id' => $question->id,
+                'selected_answer' => ['Yes'],
+                'mark_for_review' => true,
+            ])
+            ->assertOk()
+            ->assertJsonPath('data.answers.0.selected_answer.mark_for_review', true);
     }
 
     private function createTenant(string $slug): Tenant

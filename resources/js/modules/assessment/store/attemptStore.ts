@@ -9,7 +9,7 @@ interface AttemptState {
     loading: boolean;
     error: string | null;
     startAttempt: (assessmentId: number) => Promise<void>;
-    saveAnswer: (assessmentId: number, questionId: number, selectedAnswer: unknown[]) => Promise<void>;
+    saveAnswer: (assessmentId: number, questionId: number, selectedAnswer: unknown[], markForReview?: boolean) => Promise<void>;
     tick: () => void;
     setTimer: (seconds: number) => void;
 }
@@ -31,10 +31,10 @@ export const useAttemptStore = create<AttemptState>((set, get) => ({
         }
     },
 
-    saveAnswer: async (assessmentId, questionId, selectedAnswer) => {
+    saveAnswer: async (assessmentId, questionId, selectedAnswer, markForReview = false) => {
         set({ loading: true, error: null });
         try {
-            const currentAttempt = await assessmentService.saveAnswer(assessmentId, questionId, selectedAnswer);
+            const currentAttempt = await assessmentService.saveAnswer(assessmentId, questionId, selectedAnswer, markForReview);
             set({
                 currentAttempt,
                 loading: false,

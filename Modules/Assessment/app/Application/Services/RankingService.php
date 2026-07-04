@@ -16,15 +16,14 @@ class RankingService implements RankingServiceInterface
     {
         $leaderboard = $this->repository->fetchLeaderboard($attempt->tenant_id, $attempt->assessment_id);
         $rank = 1;
+        $rankByAttemptId = [];
 
         foreach ($leaderboard as $entry) {
-            AssessmentAttempt::query()
-                ->where('tenant_id', $attempt->tenant_id)
-                ->whereKey((int) $entry->id)
-                ->update(['rank' => $rank]);
-
+            $rankByAttemptId[(int) $entry->id] = $rank;
             $rank++;
         }
+
+        $this->repository->updateRanks($attempt->tenant_id, $rankByAttemptId);
 
         return $attempt->refresh();
     }

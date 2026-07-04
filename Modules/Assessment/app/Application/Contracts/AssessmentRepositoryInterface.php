@@ -22,6 +22,8 @@ interface AssessmentRepositoryInterface
 
     public function findActiveAttempt(int $tenantId, int $assessmentId, int $studentId): ?AssessmentAttempt;
 
+    public function hasSubmittedAttempt(int $tenantId, int $assessmentId, int $studentId): bool;
+
     public function createAttempt(array $attributes): AssessmentAttempt;
 
     public function updateAttempt(AssessmentAttempt $attempt, array $attributes): AssessmentAttempt;
@@ -29,4 +31,6 @@ interface AssessmentRepositoryInterface
     public function upsertAnswer(int $tenantId, int $attemptId, int $questionId, array $selectedAnswer): AssessmentAnswer;
 
     public function fetchLeaderboard(int $tenantId, int $assessmentId): array;
+
+    public function updateRanks(int $tenantId, array $rankByAttemptId): void;
 }

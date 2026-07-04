@@ -41,6 +41,17 @@ export interface AssessmentAttempt {
     percentage: number;
     rank?: number | null;
     status: string;
+    assessment?: {
+        id: number;
+        title: string;
+        instructions?: string | null;
+        start_at?: string | null;
+        end_at?: string | null;
+        duration_minutes?: number | null;
+        randomize_questions: boolean;
+        randomize_options: boolean;
+        questions: AssessmentQuestion[];
+    };
     answers?: Array<{
         id: number;
         question_id: number;

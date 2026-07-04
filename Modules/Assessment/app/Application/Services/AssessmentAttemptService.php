@@ -3,6 +3,7 @@
 namespace Modules\Assessment\Application\Services;
 
 use Illuminate\Database\Eloquent\ModelNotFoundException;
+use Illuminate\Support\Facades\Cache;
 use Illuminate\Support\Facades\Event;
 use Illuminate\Validation\ValidationException;
 use Modules\Assessment\Application\Contracts\AssessmentAttemptServiceInterface;
@@ -39,23 +40,34 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
         $this->assertSchedulable($assessment);
 
         $student = $this->resolveStudent($tenantId);
+        $lockKey = sprintf('assessment-attempt-start:%d:%d:%d', $tenantId, $assessment->id, $student->id);
 
-        $active = $this->repository->findActiveAttempt($tenantId, $assessment->id, $student->id);
-        if ($active) {
-            return $active->load(['assessment', 'answers']);
-        }
+        $attempt = Cache::lock($lockKey, 10)->block(5, function () use ($tenantId, $assessment, $student): AssessmentAttempt {
+            if ($this->repository->hasSubmittedAttempt($tenantId, $assessment->id, $student->id)) {
+                throw ValidationException::withMessages([
+                    'attempt' => ['You have already submitted this assessment.'],
+                ]);
+            }
 
-        $attempt = $this->repository->createAttempt([
-            'tenant_id' => $tenantId,
-            'assessment_id' => $assessment->id,
-            'student_id' => $student->id,
-            'started_at' => now(),
-            'status' => 'started',
-        ]);
+            $active = $this->repository->findActiveAttempt($tenantId, $assessment->id, $student->id);
+            if ($active) {
+                return $active;
+            }
 
-        Event::dispatch(new AssessmentStarted($attempt->id, $assessment->id, $student->id, $tenantId));
+            $attempt = $this->repository->createAttempt([
+                'tenant_id' => $tenantId,
+                'assessment_id' => $assessment->id,
+                'student_id' => $student->id,
+                'started_at' => now(),
+                'status' => 'started',
+            ]);
 
-        return $attempt->load(['assessment', 'answers']);
+            Event::dispatch(new AssessmentStarted($attempt->id, $assessment->id, $student->id, $tenantId));
+
+            return $attempt;
+        });
+
+        return $this->prepareAttemptPayload($attempt);
     }
 
     public function saveAnswer(int $assessmentId, AttemptAnswerData $data): AssessmentAttempt
@@ -88,7 +100,7 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
         ]);
         $attempt = $this->repository->updateAttempt($attempt, ['status' => 'in_progress']);
 
-        return $attempt->refresh()->load(['assessment', 'answers']);
+        return $this->prepareAttemptPayload($attempt->refresh());
     }
 
     public function submit(int $assessmentId): AssessmentAttempt
@@ -100,6 +112,12 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
         if (! $attempt instanceof AssessmentAttempt) {
             throw ValidationException::withMessages([
                 'attempt' => ['No active attempt found to submit.'],
+            ]);
+        }
+
+        if ($attempt->assessment->end_at && now()->gt($attempt->assessment->end_at)) {
+            throw ValidationException::withMessages([
+                'assessment' => ['Assessment schedule has ended.'],
             ]);
         }
 
@@ -119,7 +137,7 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
 
         Event::dispatch(new ResultGenerated($attempt->id, $attempt->assessment_id, $attempt->tenant_id));
 
-        return $attempt->refresh()->load(['assessment', 'answers']);
+        return $this->prepareAttemptPayload($attempt->refresh());
     }
 
     public function evaluateAttempt(int $assessmentId, int $attemptId, array $answers): AssessmentAttempt
@@ -177,7 +195,7 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
 
         Event::dispatch(new ResultGenerated($attempt->id, $attempt->assessment_id, $attempt->tenant_id));
 
-        return $attempt->refresh()->load(['assessment', 'answers']);
+        return $this->prepareAttemptPayload($attempt->refresh());
     }
 
     public function result(int $assessmentId): array
@@ -253,5 +271,59 @@ class AssessmentAttemptService implements AssessmentAttemptServiceInterface
     private function tenantId(): int
     {
         return $this->tenantContext->requiredTenantId();
+    }
+
+    private function prepareAttemptPayload(AssessmentAttempt $attempt): AssessmentAttempt
+    {
+        $attempt->load(['assessment.questions.question', 'answers']);
+
+        $assessment = $attempt->assessment;
+        if (! $assessment instanceof Assessment) {
+            return $attempt;
+        }
+
+        $questions = $assessment->questions->sortBy('sort_order')->values();
+
+        if ((bool) $assessment->randomize_questions) {
+            $questions = $questions
+                ->sortBy(fn ($assessmentQuestion) => $this->stableHash($attempt->id, (int) $assessmentQuestion->id, 'question'))
+                ->values();
+        }
+
+        if ((bool) $assessment->randomize_options) {
+            $questions = $questions->map(function ($assessmentQuestion) use ($attempt) {
+                $question = $assessmentQuestion->question;
+
+                if (! $question || ! is_array($question->options)) {
+                    return $assessmentQuestion;
+                }
+
+                $sortedOptions = collect($question->options)
+                    ->values()
+                    ->map(fn ($option, $index) => [
+                        'index' => $index,
+                        'value' => $option,
+                    ])
+                    ->sortBy(fn ($entry) => $this->stableHash($attempt->id, (int) $assessmentQuestion->question_id, 'option-' . $entry['index']))
+                    ->pluck('value')
+                    ->values()
+                    ->all();
+
+                $question->setAttribute('options', $sortedOptions);
+                $assessmentQuestion->setRelation('question', $question);
+
+                return $assessmentQuestion;
+            })->values();
+        }
+
+        $assessment->setRelation('questions', $questions);
+        $attempt->setRelation('assessment', $assessment);
+
+        return $attempt;
+    }
+
+    private function stableHash(int $attemptId, int $entityId, string $kind): string
+    {
+        return (string) sprintf('%u', crc32($kind . ':' . $attemptId . ':' . $entityId));
     }
 }

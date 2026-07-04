@@ -4,13 +4,14 @@ namespace Modules\Assignment\Domain\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
+use Illuminate\Database\Eloquent\SoftDeletes;
 use Modules\Assessment\Domain\Models\Assessment;
 use Modules\Shared\Domain\Models\TenantAwareModel;
 use Modules\Student\Domain\Models\Student;
 
 class AssignmentSubmission extends TenantAwareModel
 {
-    use HasFactory;
+    use HasFactory, SoftDeletes;
 
     protected $fillable = [
         'tenant_id',

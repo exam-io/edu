@@ -3,6 +3,7 @@
 namespace Modules\Assessment\Infrastructure\Repositories;
 
 use Illuminate\Contracts\Pagination\LengthAwarePaginator;
+use Illuminate\Support\Facades\DB;
 use Modules\Assessment\Application\Contracts\AssessmentRepositoryInterface;
 use Modules\Assessment\Application\DTOs\AssessmentQueryData;
 use Modules\Assessment\Domain\Models\Assessment;
@@ -73,6 +74,16 @@ class AssessmentRepository implements AssessmentRepositoryInterface
             ->first();
     }
 
+    public function hasSubmittedAttempt(int $tenantId, int $assessmentId, int $studentId): bool
+    {
+        return AssessmentAttempt::query()
+            ->where('tenant_id', $tenantId)
+            ->where('assessment_id', $assessmentId)
+            ->where('student_id', $studentId)
+            ->whereIn('status', ['submitted', 'evaluated'])
+            ->exists();
+    }
+
     public function createAttempt(array $attributes): AssessmentAttempt
     {
         return AssessmentAttempt::query()->create($attributes);
@@ -111,5 +122,25 @@ class AssessmentRepository implements AssessmentRepositoryInterface
             ->orderBy('id')
             ->get(['id', 'score', 'time_taken'])
             ->all();
+    }
+
+    public function updateRanks(int $tenantId, array $rankByAttemptId): void
+    {
+        if ($rankByAttemptId === []) {
+            return;
+        }
+
+        $attemptIds = array_map('intval', array_keys($rankByAttemptId));
+
+        $caseSql = 'CASE id ';
+        foreach ($rankByAttemptId as $attemptId => $rank) {
+            $caseSql .= 'WHEN ' . (int) $attemptId . ' THEN ' . (int) $rank . ' ';
+        }
+        $caseSql .= 'END';
+
+        AssessmentAttempt::query()
+            ->where('tenant_id', $tenantId)
+            ->whereIn('id', $attemptIds)
+            ->update(['rank' => DB::raw($caseSql)]);
     }
 }
