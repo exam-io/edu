@@ -26,6 +26,7 @@ import { QuickActions } from '@components/shell/QuickActions';
 import { useAuthStore } from '@modules/auth/store/authStore';
 import { getRolePanelType } from '@modules/auth/utils/roleDashboard';
 import { useTenantStore } from '@modules/tenant/store/tenantStore';
+import { useNotificationStore } from '@modules/notification/store/notificationStore';
 import { useLocaleStore } from '@stores/localeStore';
 import { useThemeStore } from '@stores/themeStore';
 
@@ -184,27 +185,6 @@ const roleShellCopy: Record<
     },
 };
 
-const demoNotifications: ShellNotification[] = [
-    {
-        id: 'n-1',
-        title: 'Exam window opens today',
-        message: 'Midterm assessments for Grade 10 begin at 10:00 AM.',
-        time: '08:15',
-    },
-    {
-        id: 'n-2',
-        title: 'AI summary ready',
-        message: 'Your worksheet generation job has completed.',
-        time: 'Yesterday',
-    },
-    {
-        id: 'n-3',
-        title: 'Parent meeting reminder',
-        message: 'PTM for Class 8 scheduled for Friday.',
-        time: '2d ago',
-    },
-];
-
 function readRecentPaths() {
     const key = 'eduos:recent-routes';
     try {
@@ -238,6 +218,8 @@ export function AppShell({ children }: PropsWithChildren) {
     const user = useAuthStore((state) => state.user);
     const roles = useAuthStore((state) => state.roles);
     const logout = useAuthStore((state) => state.logout);
+    const notifications = useNotificationStore((state) => state.items);
+    const fetchNotifications = useNotificationStore((state) => state.fetchNotifications);
     const branding = useTenantStore((state) => state.branding);
     const tenant = useTenantStore((state) => state.tenant);
 
@@ -255,6 +237,10 @@ export function AppShell({ children }: PropsWithChildren) {
         writeRecentPath(location.pathname);
     }, [location.pathname]);
 
+    useEffect(() => {
+        void fetchNotifications();
+    }, [fetchNotifications]);
+
     const roleText = roles.length > 0 ? roles.join(', ') : 'Institute user';
     const shellTitle = tenant?.name ? `${tenant.name} • ${shellCopy.roleLabel}` : shellCopy.roleLabel;
 
@@ -262,6 +248,13 @@ export function AppShell({ children }: PropsWithChildren) {
     const recent = readRecentPaths()
         .map((path) => scopedNavItems.find((item) => item.path === path))
         .filter((item): item is ShellNavItem => Boolean(item));
+
+    const shellNotifications: ShellNotification[] = notifications.slice(0, 5).map((notification) => ({
+        id: String(notification.id),
+        title: notification.title,
+        message: notification.body ?? notification.notification_type,
+        time: new Date(notification.created_at).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' }),
+    }));
 
     return (
         <div className="min-h-screen bg-[var(--color-bg)] text-[var(--color-text)]">
@@ -291,7 +284,7 @@ export function AppShell({ children }: PropsWithChildren) {
                         language={language}
                         onLanguageToggle={() => setLanguage(language === 'en' ? 'hi' : 'en')}
                         onMenuOpen={() => setSidebarOpen(true)}
-                        notifications={demoNotifications}
+                        notifications={shellNotifications}
                         userName={user?.name ?? 'User'}
                         userEmail={user?.email ?? ''}
                         onLogout={() => {

@@ -1,0 +1,11 @@
+{
+    "name": "LiveClass",
+    "alias": "liveclass",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\LiveClass\\Providers\\LiveClassServiceProvider"
+    ],
+    "files": []
+}

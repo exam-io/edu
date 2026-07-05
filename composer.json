@@ -7,9 +7,11 @@
     "license": "MIT",
     "require": {
         "php": "^8.3",
+        "laravel-notification-channels/fcm": "*",
         "laravel/framework": "^13.8",
         "laravel/sanctum": "^4.3",
         "laravel/tinker": "^3.0",
+        "minishlink/web-push": "*",
         "nwidart/laravel-modules": "^13.0",
         "smalot/pdfparser": "2.12",
         "spatie/laravel-permission": "^8.0"

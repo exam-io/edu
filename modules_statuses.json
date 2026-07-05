@@ -18,5 +18,8 @@
     "ContentProcessing": true,
     "Assessment": true,
     "Exam": true,
-    "Assignment": true
+    "Assignment": true,
+    "LiveClass": true,
+    "Calendar": true,
+    "Notification": true
 }
