@@ -10,8 +10,11 @@ import {
     Home,
     Image,
     Library,
+    Megaphone,
     Presentation,
+    Send,
     Settings,
+    UserPlus,
     Users,
 } from 'lucide-react';
 import { type PropsWithChildren, useEffect, useMemo, useState } from 'react';
@@ -45,6 +48,10 @@ const allNavItems: ShellNavItem[] = [
     { label: 'Assessments', path: '/assessments', group: 'Learning', icon: ClipboardList },
     { label: 'Exam Overview', path: '/exams/overview', group: 'Learning', icon: BarChart3 },
     { label: 'Assignments', path: '/assignments/submissions', group: 'Learning', icon: ClipboardList },
+    { label: 'CRM Leads', path: '/crm/leads', group: 'Growth', icon: UserPlus },
+    { label: 'Admissions', path: '/admissions', group: 'Growth', icon: UserPlus },
+    { label: 'Campaigns', path: '/campaigns', group: 'Growth', icon: Send },
+    { label: 'Communications', path: '/communications', group: 'Growth', icon: Megaphone },
     { label: 'Courses', path: '/courses', group: 'Content', icon: BookOpen },
     { label: 'Content Library', path: '/content', group: 'Content', icon: Library },
     { label: 'Media Library', path: '/media', group: 'Content', icon: Image },
@@ -83,6 +90,10 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/assessments/dashboard',
         '/exams/overview',
         '/assignments/submissions',
+        '/crm/leads',
+        '/admissions',
+        '/campaigns',
+        '/communications',
         '/settings',
     ],
     teacher: [
@@ -93,6 +104,10 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/assessments/evaluate',
         '/assessments/teacher-results',
         '/assignments/submissions',
+        '/crm/leads',
+        '/admissions',
+        '/campaigns',
+        '/communications',
         '/content',
         '/question-bank',
         '/settings',
@@ -119,7 +134,7 @@ const roleNavigationPaths: Record<string, string[]> = {
 };
 
 const roleFavoritePaths: Record<string, string[]> = {
-    admin: ['/academic', '/students', '/assessments', '/ai'],
+    admin: ['/academic', '/students', '/assessments', '/crm/leads'],
     teacher: ['/dashboard/teacher', '/live-classes', '/assessments/mine'],
     student: ['/dashboard/student', '/courses', '/assessments/mine'],
     parent: ['/dashboard/parent', '/calendar'],

@@ -65,6 +65,10 @@ import {
 } from '@modules/assessment';
 import { ExamOverviewPage } from '@modules/exam';
 import { AssignmentSubmissionPage, AssignmentSubmissionsPage } from '@modules/assignment';
+import { LeadsPage } from '@modules/crm';
+import { AdmissionsPage } from '@modules/admissions';
+import { CampaignsPage } from '@modules/campaign';
+import { AnnouncementsPage } from '@modules/communication';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
@@ -142,6 +146,10 @@ export function AppRoutes() {
                             <Route path="/exams/overview" element={<ExamOverviewPage />} />
                             <Route path="/assignments/submit" element={<AssignmentSubmissionPage />} />
                             <Route path="/assignments/submissions" element={<AssignmentSubmissionsPage />} />
+                            <Route path="/crm/leads" element={<LeadsPage />} />
+                            <Route path="/admissions" element={<AdmissionsPage />} />
+                            <Route path="/campaigns" element={<CampaignsPage />} />
+                            <Route path="/communications" element={<AnnouncementsPage />} />
 
                             <Route path="/teacher-assignments" element={<TeacherAssignmentsListPage />} />
                             <Route path="/teacher-assignments/create" element={<TeacherAssignmentCreatePage />} />

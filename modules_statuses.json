@@ -21,5 +21,9 @@
     "Assignment": true,
     "LiveClass": true,
     "Calendar": true,
-    "Notification": true
+    "Notification": true,
+    "CRM": true,
+    "Admissions": true,
+    "Campaign": true,
+    "Communication": true
 }
