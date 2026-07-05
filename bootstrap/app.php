@@ -4,6 +4,7 @@ use Illuminate\Foundation\Application;
 use Illuminate\Foundation\Configuration\Exceptions;
 use Illuminate\Foundation\Configuration\Middleware;
 use Illuminate\Http\Request;
+use Modules\System\Http\Middleware\ApplySecurityHeaders;
 use Modules\Tenant\Http\Middleware\ResolveTenant;
 use Modules\Tenant\Http\Middleware\SetTenantContext;
 use Modules\Tenant\Http\Middleware\EnsureTenantActive;
@@ -22,6 +23,7 @@ return Application::configure(basePath: dirname(__DIR__))
             'tenant.context' => SetTenantContext::class,
             'tenant.active' => EnsureTenantActive::class,
             'tenant.scope' => ApplyTenantScope::class,
+            'system.security.headers' => ApplySecurityHeaders::class,
         ]);
     })
     ->withExceptions(function (Exceptions $exceptions): void {

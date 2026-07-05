@@ -3,7 +3,7 @@
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
-Route::prefix('v1')->middleware(['tenant'])->group(function (): void {
+Route::prefix('v1')->middleware(['tenant', 'system.security.headers'])->group(function (): void {
     Route::get('/health', function (Request $request) {
         $tenant = app(\App\Support\Tenancy\Contracts\TenantContextInterface::class)->tenant();
 

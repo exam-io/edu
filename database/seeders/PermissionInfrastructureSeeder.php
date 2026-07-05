@@ -20,6 +20,7 @@ class PermissionInfrastructureSeeder extends Seeder
             AssessmentExamPermissionSeeder::class,
             LiveClassCalendarNotificationPermissionSeeder::class,
             AnalyticsReportingBiPermissionSeeder::class,
+            ProductionHardeningPermissionSeeder::class,
         ]);
 
         app(PermissionRegistrar::class)->forgetCachedPermissions();

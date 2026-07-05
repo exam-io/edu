@@ -80,6 +80,10 @@ import { BillingCenterPage } from '@modules/billing';
 import { SubscriptionManagementPage } from '@modules/subscription';
 import { PaymentTransactionsPage } from '@modules/payment';
 import { RevenueDashboardPage } from '@modules/saas';
+import { SystemSecurityPage } from '@modules/system';
+import { MonitoringDashboardPage } from '@modules/monitoring';
+import { AuditTrailPage } from '@modules/audit';
+import { OperationsCenterPage } from '@modules/operations';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
@@ -183,6 +187,10 @@ export function AppRoutes() {
                             <Route path="/settings/subscription" element={<SubscriptionManagementPage />} />
                             <Route path="/settings/payments" element={<PaymentTransactionsPage />} />
                             <Route path="/settings/revenue" element={<RevenueDashboardPage />} />
+                            <Route path="/settings/system" element={<SystemSecurityPage />} />
+                            <Route path="/settings/monitoring" element={<MonitoringDashboardPage />} />
+                            <Route path="/settings/audit" element={<AuditTrailPage />} />
+                            <Route path="/settings/operations" element={<OperationsCenterPage />} />
 
                             <Route
                                 path="/"

@@ -37,5 +37,9 @@
     "Billing": true,
     "Subscription": true,
     "Payment": true,
-    "SaaS": true
+    "SaaS": true,
+    "System": true,
+    "Monitoring": true,
+    "Audit": true,
+    "Operations": true
 }

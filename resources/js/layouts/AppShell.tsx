@@ -6,14 +6,18 @@ import {
     Calendar,
     Camera,
     ClipboardList,
+    FileClock,
     GraduationCap,
     Home,
+    HardDriveUpload,
     Image,
     Library,
     Megaphone,
     Presentation,
     Send,
     Settings,
+    ShieldCheck,
+    Activity,
     UserPlus,
     Users,
 } from 'lucide-react';
@@ -71,6 +75,10 @@ const allNavItems: ShellNavItem[] = [
     { label: 'Subscription', path: '/settings/subscription', group: 'System', icon: Settings },
     { label: 'Payments', path: '/settings/payments', group: 'System', icon: Settings },
     { label: 'Revenue Dashboard', path: '/settings/revenue', group: 'System', icon: Settings },
+    { label: 'System Security', path: '/settings/system', group: 'System', icon: ShieldCheck },
+    { label: 'Monitoring Center', path: '/settings/monitoring', group: 'System', icon: Activity },
+    { label: 'Audit Trail', path: '/settings/audit', group: 'System', icon: FileClock },
+    { label: 'Operations Center', path: '/settings/operations', group: 'System', icon: HardDriveUpload },
 ];
 
 const roleNavigationPaths: Record<string, string[]> = {
@@ -113,6 +121,10 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/settings/subscription',
         '/settings/payments',
         '/settings/revenue',
+        '/settings/system',
+        '/settings/monitoring',
+        '/settings/audit',
+        '/settings/operations',
     ],
     teacher: [
         '/dashboard/teacher',
