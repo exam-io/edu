@@ -1,0 +1,30 @@
+{
+    "name": "nwidart/mobileprovisioning",
+    "description": "",
+    "authors": [
+        {
+            "name": "Nicolas Widart",
+            "email": "n.widart@gmail.com"
+        }
+    ],
+    "extra": {
+        "laravel": {
+            "providers": [],
+            "aliases": {
+
+            }
+        }
+    },
+    "autoload": {
+        "psr-4": {
+            "Modules\\MobileProvisioning\\": "app/",
+            "Modules\\MobileProvisioning\\Database\\Factories\\": "database/factories/",
+            "Modules\\MobileProvisioning\\Database\\Seeders\\": "database/seeders/"
+        }
+    },
+    "autoload-dev": {
+        "psr-4": {
+            "Modules\\MobileProvisioning\\Tests\\": "tests/"
+        }
+    }
+}

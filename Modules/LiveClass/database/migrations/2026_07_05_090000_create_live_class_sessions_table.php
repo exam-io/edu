@@ -38,7 +38,7 @@ return new class extends Migration
             $table->softDeletes();
 
             $table->index(['tenant_id', 'status']);
-            $table->index(['tenant_id', 'scheduled_start_at', 'scheduled_end_at']);
+            $table->index(['tenant_id', 'scheduled_start_at', 'scheduled_end_at'], 'lcs_tenant_schedule_range_idx');
             $table->index(['tenant_id', 'class_id', 'section_id']);
             $table->index(['tenant_id', 'provider_meeting_id']);
         });

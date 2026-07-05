@@ -62,6 +62,11 @@ const allNavItems: ShellNavItem[] = [
     { label: 'Student Dashboard', path: '/dashboard/student', group: 'Dashboards', icon: GraduationCap },
     { label: 'Parent Dashboard', path: '/dashboard/parent', group: 'Dashboards', icon: Users },
     { label: 'Settings', path: '/settings', group: 'System', icon: Settings },
+    { label: 'Branding', path: '/settings/branding', group: 'System', icon: Settings },
+    { label: 'Domains', path: '/settings/domains', group: 'System', icon: Settings },
+    { label: 'Navigation', path: '/settings/navigation', group: 'System', icon: Settings },
+    { label: 'Feature Flags', path: '/settings/feature-flags', group: 'System', icon: Settings },
+    { label: 'Mobile Provisioning', path: '/settings/mobile-provisioning', group: 'System', icon: Settings },
 ];
 
 const roleNavigationPaths: Record<string, string[]> = {
@@ -95,6 +100,11 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/campaigns',
         '/communications',
         '/settings',
+        '/settings/branding',
+        '/settings/domains',
+        '/settings/navigation',
+        '/settings/feature-flags',
+        '/settings/mobile-provisioning',
     ],
     teacher: [
         '/dashboard/teacher',
@@ -111,6 +121,8 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/content',
         '/question-bank',
         '/settings',
+        '/settings/branding',
+        '/settings/feature-flags',
     ],
     student: [
         '/dashboard/student',
@@ -122,6 +134,7 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/assessments/attempt',
         '/assignments/submit',
         '/settings',
+        '/settings/branding',
     ],
     parent: [
         '/dashboard/parent',
@@ -129,6 +142,7 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/live-classes',
         '/assignments/submissions',
         '/settings',
+        '/settings/branding',
     ],
     general: ['/academic', '/calendar', '/settings'],
 };

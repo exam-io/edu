@@ -1,0 +1,11 @@
+{
+    "name": "FeatureManagement",
+    "alias": "featuremanagement",
+    "description": "",
+    "keywords": [],
+    "priority": 0,
+    "providers": [
+        "Modules\\FeatureManagement\\Providers\\FeatureManagementServiceProvider"
+    ],
+    "files": []
+}

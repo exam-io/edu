@@ -51,14 +51,19 @@ return new class extends Migration
             Schema::create('admission_application_status_histories', function (Blueprint $table): void {
                 $table->id();
                 $table->foreignId('tenant_id')->constrained('tenants')->cascadeOnDelete();
-                $table->foreignId('admission_application_id')->constrained('admission_applications')->cascadeOnDelete();
+                $table->unsignedBigInteger('admission_application_id');
                 $table->string('from_status', 40)->nullable();
                 $table->string('to_status', 40);
                 $table->string('note', 1000)->nullable();
                 $table->foreignId('actor_user_id')->nullable()->constrained('users')->nullOnDelete();
                 $table->timestamps();
 
-                $table->index(['tenant_id', 'admission_application_id']);
+                $table->foreign('admission_application_id', 'aash_app_id_fk')
+                    ->references('id')
+                    ->on('admission_applications')
+                    ->cascadeOnDelete();
+
+                $table->index(['tenant_id', 'admission_application_id'], 'aash_tenant_app_idx');
             });
         }
     }

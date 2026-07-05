@@ -29,5 +29,9 @@
     "Analytics": true,
     "Reporting": true,
     "Dashboard": true,
-    "Insights": true
+    "Insights": true,
+    "Branding": true,
+    "WhiteLabel": true,
+    "FeatureManagement": true,
+    "MobileProvisioning": true
 }

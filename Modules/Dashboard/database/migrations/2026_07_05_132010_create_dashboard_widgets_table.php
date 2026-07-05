@@ -23,7 +23,7 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['tenant_id', 'dashboard_definition_id', 'sort_order']);
+            $table->index(['tenant_id', 'dashboard_definition_id', 'sort_order'], 'dw_tenant_dashboard_sort_idx');
         });
     }
 

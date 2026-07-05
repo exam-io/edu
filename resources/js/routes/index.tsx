@@ -72,6 +72,10 @@ import { AnnouncementsPage } from '@modules/communication';
 import { AnalyticsOverviewPage } from '@modules/analytics';
 import { ReportBuilderPage, ReportLibraryPage, ScheduledReportsPage } from '@modules/reporting';
 import { InsightsCenterPage } from '@modules/insights';
+import { BrandingSettingsPage } from '@modules/branding';
+import { FeatureFlagsPage } from '@modules/feature-management';
+import { DomainSettingsPage, NavigationSettingsPage } from '@modules/white-label';
+import { MobileProvisioningPage } from '@modules/mobile-provisioning';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
@@ -166,6 +170,11 @@ export function AppRoutes() {
                             <Route path="/teacher-assignments/:id/edit" element={<TeacherAssignmentEditPage />} />
 
                             <Route path="/settings" element={<SettingsPage />} />
+                            <Route path="/settings/branding" element={<BrandingSettingsPage />} />
+                            <Route path="/settings/feature-flags" element={<FeatureFlagsPage />} />
+                            <Route path="/settings/domains" element={<DomainSettingsPage />} />
+                            <Route path="/settings/navigation" element={<NavigationSettingsPage />} />
+                            <Route path="/settings/mobile-provisioning" element={<MobileProvisioningPage />} />
 
                             <Route
                                 path="/"

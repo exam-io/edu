@@ -28,7 +28,7 @@ return new class extends Migration
 
             $table->unique(['tenant_id', 'live_class_session_id', 'student_id'], 'live_class_attendance_unique_student');
             $table->index(['tenant_id', 'live_class_session_id']);
-            $table->index(['tenant_id', 'student_id', 'attendance_status']);
+            $table->index(['tenant_id', 'student_id', 'attendance_status'], 'lca_tenant_student_status_idx');
         });
     }
 

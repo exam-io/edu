@@ -25,9 +25,9 @@ return new class extends Migration
             $table->timestamps();
             $table->softDeletes();
 
-            $table->index(['tenant_id', 'metric_key', 'generated_at']);
-            $table->index(['tenant_id', 'dimension_key', 'dimension_value']);
-            $table->index(['tenant_id', 'period_start', 'period_end']);
+            $table->index(['tenant_id', 'metric_key', 'generated_at'], 'ams_tenant_metric_generated_idx');
+            $table->index(['tenant_id', 'dimension_key', 'dimension_value'], 'ams_tenant_dimension_idx');
+            $table->index(['tenant_id', 'period_start', 'period_end'], 'ams_tenant_period_range_idx');
         });
     }
 
