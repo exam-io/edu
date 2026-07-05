@@ -67,6 +67,10 @@ const allNavItems: ShellNavItem[] = [
     { label: 'Navigation', path: '/settings/navigation', group: 'System', icon: Settings },
     { label: 'Feature Flags', path: '/settings/feature-flags', group: 'System', icon: Settings },
     { label: 'Mobile Provisioning', path: '/settings/mobile-provisioning', group: 'System', icon: Settings },
+    { label: 'Billing Center', path: '/settings/billing', group: 'System', icon: Settings },
+    { label: 'Subscription', path: '/settings/subscription', group: 'System', icon: Settings },
+    { label: 'Payments', path: '/settings/payments', group: 'System', icon: Settings },
+    { label: 'Revenue Dashboard', path: '/settings/revenue', group: 'System', icon: Settings },
 ];
 
 const roleNavigationPaths: Record<string, string[]> = {
@@ -105,6 +109,10 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/settings/navigation',
         '/settings/feature-flags',
         '/settings/mobile-provisioning',
+        '/settings/billing',
+        '/settings/subscription',
+        '/settings/payments',
+        '/settings/revenue',
     ],
     teacher: [
         '/dashboard/teacher',
@@ -123,6 +131,10 @@ const roleNavigationPaths: Record<string, string[]> = {
         '/settings',
         '/settings/branding',
         '/settings/feature-flags',
+        '/settings/billing',
+        '/settings/subscription',
+        '/settings/payments',
+        '/settings/revenue',
     ],
     student: [
         '/dashboard/student',

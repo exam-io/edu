@@ -33,5 +33,9 @@
     "Branding": true,
     "WhiteLabel": true,
     "FeatureManagement": true,
-    "MobileProvisioning": true
+    "MobileProvisioning": true,
+    "Billing": true,
+    "Subscription": true,
+    "Payment": true,
+    "SaaS": true
 }

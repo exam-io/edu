@@ -76,6 +76,10 @@ import { BrandingSettingsPage } from '@modules/branding';
 import { FeatureFlagsPage } from '@modules/feature-management';
 import { DomainSettingsPage, NavigationSettingsPage } from '@modules/white-label';
 import { MobileProvisioningPage } from '@modules/mobile-provisioning';
+import { BillingCenterPage } from '@modules/billing';
+import { SubscriptionManagementPage } from '@modules/subscription';
+import { PaymentTransactionsPage } from '@modules/payment';
+import { RevenueDashboardPage } from '@modules/saas';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
@@ -175,6 +179,10 @@ export function AppRoutes() {
                             <Route path="/settings/domains" element={<DomainSettingsPage />} />
                             <Route path="/settings/navigation" element={<NavigationSettingsPage />} />
                             <Route path="/settings/mobile-provisioning" element={<MobileProvisioningPage />} />
+                            <Route path="/settings/billing" element={<BillingCenterPage />} />
+                            <Route path="/settings/subscription" element={<SubscriptionManagementPage />} />
+                            <Route path="/settings/payments" element={<PaymentTransactionsPage />} />
+                            <Route path="/settings/revenue" element={<RevenueDashboardPage />} />
 
                             <Route
                                 path="/"
