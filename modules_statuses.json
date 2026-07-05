@@ -25,5 +25,9 @@
     "CRM": true,
     "Admissions": true,
     "Campaign": true,
-    "Communication": true
+    "Communication": true,
+    "Analytics": true,
+    "Reporting": true,
+    "Dashboard": true,
+    "Insights": true
 }

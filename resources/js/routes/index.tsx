@@ -69,6 +69,9 @@ import { LeadsPage } from '@modules/crm';
 import { AdmissionsPage } from '@modules/admissions';
 import { CampaignsPage } from '@modules/campaign';
 import { AnnouncementsPage } from '@modules/communication';
+import { AnalyticsOverviewPage } from '@modules/analytics';
+import { ReportBuilderPage, ReportLibraryPage, ScheduledReportsPage } from '@modules/reporting';
+import { InsightsCenterPage } from '@modules/insights';
 import { Navigate, Route, Routes } from 'react-router-dom';
 import { TenantBootstrapProvider } from '@modules/tenant';
 import { CalendarPage } from '@modules/dashboard/pages/CalendarPage';
@@ -76,6 +79,7 @@ import { LiveClassesPage } from '@modules/dashboard/pages/LiveClassesPage';
 import { TeacherDashboardPage } from '@modules/dashboard/pages/TeacherDashboardPage';
 import { StudentDashboardPage } from '@modules/dashboard/pages/StudentDashboardPage';
 import { ParentDashboardPage } from '@modules/dashboard/pages/ParentDashboardPage';
+import { AdminAnalyticsDashboardPage } from '@modules/dashboard/pages/AdminAnalyticsDashboardPage';
 import { RoleHomeRedirect } from '@modules/auth/routes/RoleHomeRedirect';
 
 export function AppRoutes() {
@@ -132,6 +136,12 @@ export function AppRoutes() {
                             <Route path="/dashboard/teacher" element={<TeacherDashboardPage />} />
                             <Route path="/dashboard/student" element={<StudentDashboardPage />} />
                             <Route path="/dashboard/parent" element={<ParentDashboardPage />} />
+                            <Route path="/dashboard/analytics" element={<AdminAnalyticsDashboardPage />} />
+                            <Route path="/analytics" element={<AnalyticsOverviewPage />} />
+                            <Route path="/reports" element={<ReportLibraryPage />} />
+                            <Route path="/reports/builder" element={<ReportBuilderPage />} />
+                            <Route path="/reports/scheduled" element={<ScheduledReportsPage />} />
+                            <Route path="/insights" element={<InsightsCenterPage />} />
                             <Route path="/assessments" element={<AssessmentListPage />} />
                             <Route path="/assessments/create" element={<CreateAssessmentPage />} />
                             <Route path="/assessments/builder" element={<AssessmentBuilderPage />} />

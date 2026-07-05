@@ -3,7 +3,7 @@ export type RolePanelType = 'admin' | 'teacher' | 'student' | 'parent' | 'genera
 const roleLandingMap: Array<{ names: string[]; path: string }> = [
     {
         names: ['super admin', 'institute admin', 'tenant-admin', 'tenant manager', 'tenant-manager'],
-        path: '/academic',
+        path: '/dashboard/analytics',
     },
     {
         names: ['teacher', 'faculty'],
@@ -55,5 +55,5 @@ export function getRoleDefaultPath(roles: string[]): string {
         }
     }
 
-    return '/academic';
+    return '/dashboard/analytics';
 }
